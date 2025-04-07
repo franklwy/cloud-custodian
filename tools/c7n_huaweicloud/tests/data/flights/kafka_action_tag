@@ -11,15 +11,15 @@ interactions:
       Content-Type:
       - application/json
       Host:
-      - dms.ap-southeast-1.myhuaweicloud.com
+      - dms.ap-southeat-1.myhuaweicloud.com
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Project-Id:
-      - ap-southeast-1
+      - ap-southeat-1
       X-Sdk-Date:
       - 20250403T044325Z
     method: GET
-    uri: https://127.0.0.1:3128/v2/ap-southeast-1/instances?limit=10&offset=0
+    uri: https://127.0.0.1:3128/v2/ap-southeat-1/instances?limit=10&offset=0
   response:
     body:
       string: '{ "instances" : [ { "name" : "kafka-instance-example", "engine" : "kafka",
@@ -75,15 +75,15 @@ interactions:
       Content-Type:
       - application/json
       Host:
-      - dms.ap-southeast-1.myhuaweicloud.com
+      - dms.ap-southeat-1.myhuaweicloud.com
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Project-Id:
-      - ap-southeast-1
+      - ap-southeat-1
       X-Sdk-Date:
       - 20250403T044327Z
     method: POST
-    uri: https://127.0.0.1:3128/v2/ap-southeast-1/kafka/instances/tags/action
+    uri: https://127.0.0.1:3128/v2/ap-southeat-1/kafka/instances/tags/action
   response:
     body:
       string: ''
@@ -126,15 +126,15 @@ interactions:
       Content-Type:
       - application/json
       Host:
-      - dms.ap-southeast-1.myhuaweicloud.com
+      - dms.ap-southeat-1.myhuaweicloud.com
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Project-Id:
-      - ap-southeast-1
+      - ap-southeat-1
       X-Sdk-Date:
       - 20250403T045233Z
     method: POST
-    uri: https://127.0.0.1:3128/v2/ap-southeast-1/kafka/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/tags/action
+    uri: https://127.0.0.1:3128/v2/ap-southeat-1/kafka/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/tags/action
   response:
     body:
       string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"8f8c1add2b5081847f4a3be85f9ee4f6"}

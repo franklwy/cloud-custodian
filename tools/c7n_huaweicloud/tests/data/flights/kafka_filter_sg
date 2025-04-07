@@ -11,15 +11,15 @@ interactions:
       Content-Type:
       - application/json
       Host:
-      - dms.ap-southeast-1.myhuaweicloud.com
+      - dms.ap-southeat-1.myhuaweicloud.com
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Project-Id:
-      - ap-southeast-1
+      - ap-southeat-1
       X-Sdk-Date:
       - 20250403T031925Z
     method: GET
-    uri: https://127.0.0.1:3128/v2/ap-southeast-1/instances?limit=10&offset=0
+    uri: https://127.0.0.1:3128/v2/ap-southeat-1/instances?limit=10&offset=0
   response:
     body:
       string: '{ "instances" : [ { "name" : "kafka-instance-example", "engine" : "kafka",
@@ -72,15 +72,15 @@ interactions:
       Content-Type:
       - application/json
       Host:
-      - vpc.ap-southeast-1.myhuaweicloud.com
+      - vpc.ap-southeat-1.myhuaweicloud.com
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Project-Id:
-      - ap-southeast-1
+      - ap-southeat-1
       X-Sdk-Date:
       - 20250403T044737Z
     method: GET
-    uri: https://127.0.0.1:3128/v3/ap-southeast-1/vpc/security-groups?limit=10
+    uri: https://127.0.0.1:3128/v3/ap-southeat-1/vpc/security-groups?limit=10
   response:
     body:
       string: '{"security_groups":[{"id":"securityGroupId","name":"cluster-yhr-test-cce-node-klt95","description":"The security group is created by CCE cluster 77d2249e-fc41-11ec-8c35-0255ac1001be for the node","tenant_id":"0b01fbb49900d3bb2f56c00609cff3bc","security_group_rules":[{"id":"c3fc36d6-cdfa-4b1b-9edb-181a24766780","description":"","direction":"ingress","protocol":"tcp","ethertype":"IPv4","security_group_id":"030f635d-b407-4ffb-b530-6b4eaf8edc03","remote_group_id":null,"remote_ip_prefix":"192.168.17.237/32","port_range_max":9092,"port_range_min":9092,"tenant_id":"0b01fbb49900d3bb2f56c00609cff3bc","remote_address_group_id":null,"project_id":"0b01fbb49900d3bb2f56c00609cff3bc","created_at":"2025-03-16T16:46:23","updated_at":"2025-03-16T16:46:23"},{"id":"62ddc0bb-b6a6-4b5b-88e3-4a9e6bc46bfe","description":"","direction":"ingress","protocol":"tcp","ethertype":"IPv4","security_group_id":"030f635d-b407-4ffb-b530-6b4eaf8edc03","remote_group_id":null,"remote_ip_prefix":"192.168.7.0/24","port_range_max":null,"port_range_min":null,"tenant_id":"0b01fbb49900d3bb2f56c00609cff3bc","remote_address_group_id":null,"project_id":"0b01fbb49900d3bb2f56c00609cff3bc","created_at":"2025-03-06T09:59:27","updated_at":"2025-03-06T09:59:27"}]}'
