@@ -87,19 +87,6 @@ from huaweicloudsdksecmaster.v2.region.secmaster_region import SecMasterRegion
 from huaweicloudsdkram.v1 import RamClient, SearchResourceShareAssociationsRequest, \
     SearchResourceShareAssociationsReqBody
 from huaweicloudsdkram.v1.region.ram_region import RamRegion
-from huaweicloudsdksecmaster.v2 import ListWorkspacesRequest, SecMasterClient
-from huaweicloudsdksecmaster.v2.region.secmaster_region import SecMasterRegion
-from huaweicloudsdksfsturbo.v1 import SFSTurboClient, ListSharesRequest
-from huaweicloudsdksfsturbo.v1.region.sfsturbo_region import SFSTurboRegion
-from huaweicloudsdksmn.v2 import SmnClient, ListTopicsRequest
-from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
-from huaweicloudsdktms.v1 import TmsClient
-from huaweicloudsdktms.v1.region.tms_region import TmsRegion
-from huaweicloudsdkvpc.v2 import ListSecurityGroupsRequest
-from huaweicloudsdkvpc.v2.vpc_client import VpcClient as VpcClientV2
-from huaweicloudsdkvpc.v3.region.vpc_region import VpcRegion
-from huaweicloudsdkvpc.v3.vpc_client import VpcClient as VpcClientV3
-from obs import ObsClient
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
