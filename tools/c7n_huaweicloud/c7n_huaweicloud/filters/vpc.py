@@ -167,7 +167,7 @@ class DefaultVpcBase(Filter):
     """过滤默认VPC中的资源
 
     用于识别位于默认VPC中的资源。
-    
+
     :example:
 
     .. code-block:: yaml

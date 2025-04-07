@@ -24,7 +24,7 @@ class KafkaInstanceTest(BaseTest):
         self.assertEqual(resources[0]['name'], "kafka-instance-example")  # 假设实例名称
         # 验证 augment 是否正确转换了标签
         self.assertTrue('Tags' in resources[0])
-        self.assertEqual(resources[0]['Tags'], [{'Key': 'environment', 'Value': 'testing'}])  # 假设标签
+        self.assertEqual(resources[0]['Tags'], [{'Key': 'environment', 'Value': 'testing'}])  # 假设
 
     # =========================
     # Filter Tests
