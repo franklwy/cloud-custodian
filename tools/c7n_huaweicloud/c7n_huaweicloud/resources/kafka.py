@@ -69,7 +69,7 @@ class Kafka(QueryResourceManager):
         # 'list_instances' is the API method name
         # 'instances' is the field name in the response containing the instance list
         # 'offset' is the parameter name for pagination
-        enum_spec = ('list_instances', 'instances', 
+        enum_spec = ('list_instances', 'instances',
                      'offset', 10)
         id = 'instance_id'  # Specify resource unique identifier field name
         name = 'name'  # Specify resource name field name
@@ -256,7 +256,8 @@ class KafkaListItemFilter(ListItemFilter):
         # key: Resource attribute key name to check, value must be list
         key={'oneOf': [
             {'type': 'string'},
-            {'type': 'integer', 'minimum': 0},  # Key can also be integer (if resource dictionary key is integer)
+            {'type': 'integer', 'minimum': 0},
+            # Key can also be integer (if resource dictionary key is integer)
             {'type': 'array', 'items': {'type': 'string'}}  # Or path list
         ]},
         # key_path: (Optional) JMESPath expression, used to extract comparison value from list item
@@ -383,7 +384,8 @@ class KafkaConfigComplianceFilter(ValueFilter):
         rinherit=ValueFilter.schema,
         # Following attributes extend ValueFilter.schema
         key={'type': 'string'},  # Kafka configuration item name to check
-        op={'enum': list(OPERATORS.keys()), 'default': 'eq'},  # Comparison operator, default is 'eq' (equal)
+        op={'enum': list(OPERATORS.keys()), 'default': 'eq'},
+        # Comparison operator, default is 'eq' (equal)
         # Expected value, can be string, boolean, or number
         value={'oneOf': [
             {'type': 'string'},
@@ -405,7 +407,7 @@ class KafkaConfigComplianceFilter(ValueFilter):
 
         # Get HuaweiCloud Kafka service client
         client = local_session(self.manager.session_factory).client('kafka')
-        
+
         for resource in resources:
             instance_id = resource.get('instance_id')
             if not instance_id:
@@ -447,7 +449,8 @@ class KafkaConfigComplianceFilter(ValueFilter):
                         break
 
                 if not config_found:
-                    log.warning(f"Configuration item '{key}' not found in Kafka instance {instance_id}")
+                    log.warning(
+                        f"Configuration item '{key}' not found in Kafka instance {instance_id}")
                     resource['KafkaConfig'] = {key: None}
 
             except exceptions.ClientRequestException as e:
@@ -633,7 +636,8 @@ class KafkaMarkedForOpFilter(Filter):
                 if isinstance(raw_tags, dict):
                     tags = raw_tags
                 elif isinstance(raw_tags, list):
-                    if all(isinstance(item, dict) and 'key' in item and 'value' in item for item in raw_tags):
+                    if all(isinstance(item, dict) and 'key' in item and 'value' in item for item in
+                           raw_tags):
                         # Compatible with Huawei Cloud specific [{key: k1, value: v1}] format
                         for item in raw_tags:
                             tags[item['key']] = item['value']
@@ -705,7 +709,8 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
 
         instance_id = resource.get('instance_id')
         if not instance_id:
-            log.error(f"Failed to mark Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
+            log.error(
+                f"Failed to mark Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
             return None
 
         # Calculate scheduled execution time (UTC)
@@ -715,7 +720,8 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
             # Format timestamp string, format must be consistent with TagActionFilter parsing format
             action_time_str = action_time.strftime('%Y/%m/%d %H:%M:%S UTC')
         except OverflowError:
-            log.error(f"Invalid marked operation timestamp calculation for Kafka instance {instance_id} (days={days}, hours={hours})")
+            log.error(
+                f"Invalid marked operation timestamp calculation for Kafka instance {instance_id} (days={days}, hours={hours})")
             return None
 
         # Build tag value, format is "operation_timestamp"
@@ -751,7 +757,8 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
             request.body.tags = [tag_entity]
             # Call API to execute operation
             client.batch_create_or_delete_kafka_tag(request)
-            log.info(f"Added or updated tag for Kafka instance {instance_name} ({instance_id}): {key}={value}")
+            log.info(
+                f"Added or updated tag for Kafka instance {instance_name} ({instance_id}): {key}={value}")
         except exceptions.ClientRequestException as e:
             # Handle API request exception
             log.error(
@@ -760,7 +767,8 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
             )
         except Exception as e:
             # Handle other potential exceptions
-            log.error(f"Failed to add or update tag {key} for Kafka instance {instance_name} ({instance_id}): {str(e)}")
+            log.error(
+                f"Failed to add or update tag {key} for Kafka instance {instance_name} ({instance_id}): {str(e)}")
 
 
 @Kafka.action_registry.register('auto-tag-user')
@@ -797,7 +805,8 @@ class KafkaAutoTagUser(HuaweiCloudBaseAction):
         # Optional 'account' (might represent current executing policy account, but not meaningful in this context)
         mode={'type': 'string', 'enum': ['resource', 'account'], 'default': 'resource'},
         # If mode is 'resource', specify from resource dictionary to get user name key, default is 'creator'
-        user_key={'type': 'string', 'default': 'creator'},  # Changed to 'creator' might be more general
+        user_key={'type': 'string', 'default': 'creator'},
+        # Changed to 'creator' might be more general
         # Whether to update existing tag, default is True
         update={'type': 'boolean', 'default': True},
         required=[]  # No required parameters (because all have default values)
@@ -900,7 +909,8 @@ class KafkaTag(HuaweiCloudBaseAction):
 
         instance_id = resource.get('instance_id')
         if not instance_id:
-            log.error(f"Failed to mark Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
+            log.error(
+                f"Failed to mark Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
             return None
 
         # Reuse KafkaMarkForOpAction's helper method
@@ -966,7 +976,8 @@ class KafkaRemoveTag(HuaweiCloudBaseAction):
         instance_id = resource.get('instance_id')
         instance_name = resource.get('name', 'Unknown Name')
         if not instance_id:
-            log.error(f"Failed to remove tag, Kafka resource missing 'instance_id': {instance_name}")
+            log.error(
+                f"Failed to remove tag, Kafka resource missing 'instance_id': {instance_name}")
             return None
 
         # Check actual tags existing on instance, avoid trying to delete non-existing tag (although API might allow, it produces unnecessary call)
@@ -974,7 +985,8 @@ class KafkaRemoveTag(HuaweiCloudBaseAction):
         keys_that_exist = [k for k in tags_to_remove if k in current_tags]
 
         if not keys_that_exist:
-            log.debug(f"Kafka instance {instance_name} ({instance_id}) has no tags to remove: {tags_to_remove}")
+            log.debug(
+                f"Kafka instance {instance_name} ({instance_id}) has no tags to remove: {tags_to_remove}")
             return None
 
         # Call internal method to remove tag
@@ -1005,14 +1017,16 @@ class KafkaRemoveTag(HuaweiCloudBaseAction):
             request.body.tags = tag_entities  # Include tags to delete
             # Call API to execute delete
             client.batch_create_or_delete_kafka_tag(request)
-            log.info(f"Removed tags from Kafka instance {instance_name} ({instance_id}): {keys_to_delete}")
+            log.info(
+                f"Removed tags from Kafka instance {instance_name} ({instance_id}): {keys_to_delete}")
         except exceptions.ClientRequestException as e:
             log.error(
                 f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name} ({instance_id}): "
                 f"{e.error_msg} (Status Code: {e.status_code})"
             )
         except Exception as e:
-            log.error(f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name} ({instance_id}): {str(e)}")
+            log.error(
+                f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name} ({instance_id}): {str(e)}")
 
 
 @Kafka.action_registry.register('rename-tag')
@@ -1060,13 +1074,15 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
         new_key = self.data.get('new_key')
 
         if old_key == new_key:
-            log.warning(f"Old tag key '{old_key}' and new tag key '{new_key}' are the same, no need to rename.")
+            log.warning(
+                f"Old tag key '{old_key}' and new tag key '{new_key}' are the same, no need to rename.")
             return None
 
         instance_id = resource.get('instance_id')
         instance_name = resource.get('name', 'Unknown Name')
         if not instance_id:
-            log.error(f"Failed to rename tag, Kafka resource missing 'instance_id': {instance_name}")
+            log.error(
+                f"Failed to rename tag, Kafka resource missing 'instance_id': {instance_name}")
             return None
 
         # Find old tag value
@@ -1079,7 +1095,8 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
 
         # If old tag does not exist, no operation
         if old_value is None:
-            log.info(f"Kafka instance {instance_name} ({instance_id}) does not find tag '{old_key}', skip rename.")
+            log.info(
+                f"Kafka instance {instance_name} ({instance_id}) does not find tag '{old_key}', skip rename.")
             return None
 
         # Check if new tag already exists
@@ -1100,7 +1117,8 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
         remover = KafkaRemoveTag(self.data, self.manager)
         remover._remove_tags_internal(resource, [old_key])
 
-        log.info(f"Renamed Kafka instance {instance_name} ({instance_id}) tag '{old_key}' to '{new_key}'")
+        log.info(
+            f"Renamed Kafka instance {instance_name} ({instance_id}) tag '{old_key}' to '{new_key}'")
 
         return None
 
@@ -1161,7 +1179,8 @@ class DeleteKafka(HuaweiCloudBaseAction):
             request = DeleteInstanceRequest(instance_id=instance_id)
             # Call API to execute delete operation
             response = client.delete_instance(request)
-            log.info(f"Started delete Kafka instance {instance_name} ({instance_id}) operation. Response: {response}")
+            log.info(
+                f"Started delete Kafka instance {instance_name} ({instance_id}) operation. Response: {response}")
             return response  # Return API response
         except exceptions.ClientRequestException as e:
             log.error(
@@ -1227,13 +1246,15 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
         instance_id = resource.get('instance_id')
         instance_name = resource.get('name', 'Unknown Name')
         if not instance_id:
-            log.error(f"Failed to modify configuration, Kafka resource missing 'instance_id': {instance_name}")
+            log.error(
+                f"Failed to modify configuration, Kafka resource missing 'instance_id': {instance_name}")
             return None
 
         # Get configuration item dictionary from policy
         config_data = self.data.get('config', {})
         if not config_data:
-            log.warning(f"No 'config' data provided in set-monitoring action, skip instance {instance_name} ({instance_id}).")
+            log.warning(
+                f"No 'config' data provided in set-monitoring action, skip instance {instance_name} ({instance_id}).")
             return None
 
         # Get HuaweiCloud Kafka client
@@ -1269,7 +1290,8 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
             request.body.kafka_configs = kafka_configs
 
             if not kafka_configs:
-                log.warning(f"No valid configuration items provided for set-monitoring action, skip instance {instance_name} ({instance_id}).")
+                log.warning(
+                    f"No valid configuration items provided for set-monitoring action, skip instance {instance_name} ({instance_id}).")
                 return None
 
             # Record prepared configuration items (for logging)
@@ -1279,7 +1301,8 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
 
             # Call API to execute modify configuration operation
             response = client.modify_instance_configs(request)
-            log.info(f"Modified configuration for Kafka instance {instance_name} ({instance_id}): {processed_configs}. Response: {response}")
+            log.info(
+                f"Modified configuration for Kafka instance {instance_name} ({instance_id}): {processed_configs}. Response: {response}")
             return response  # Return API response
         except exceptions.ClientRequestException as e:
             log.error(
@@ -1288,5 +1311,6 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
             )
             return None  # Return None if modification failed
         except Exception as e:
-            log.error(f"Failed to modify Kafka instance {instance_name} ({instance_id}) configuration: {str(e)}")
+            log.error(
+                f"Failed to modify Kafka instance {instance_name} ({instance_id}) configuration: {str(e)}")
             return None
