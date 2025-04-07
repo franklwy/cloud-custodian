@@ -19,7 +19,7 @@ interactions:
       X-Sdk-Date:
       - 20250403T044325Z
     method: GET
-    uri: https://127.0.0.1:3128/v2/ap-southeat-1/instances?limit=10&offset=0
+    uri: https://dms.ap-southeat-1.myhuaweicloud.com/v2/ap-southeat-1/instances?limit=10&offset=0
   response:
     body:
       string: '{ "instances" : [ { "name" : "kafka-instance-example", "engine" : "kafka",
@@ -83,7 +83,7 @@ interactions:
       X-Sdk-Date:
       - 20250403T044327Z
     method: POST
-    uri: https://127.0.0.1:3128/v2/ap-southeat-1/kafka/instances/tags/action
+    uri: https://dms.ap-southeat-1.myhuaweicloud.com/v2/ap-southeat-1/kafka/instances/tags/action
   response:
     body:
       string: ''
@@ -134,7 +134,7 @@ interactions:
       X-Sdk-Date:
       - 20250403T045231Z
     method: POST
-    uri: https://127.0.0.1:3128/v2/ap-southeat-1/kafka/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/tags/action
+    uri: https://dms.ap-southeat-1.myhuaweicloud.com/v2/ap-southeat-1/kafka/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/tags/action
   response:
     body:
       string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"0c8c0259a07d0634db21090ba6b400e9"}

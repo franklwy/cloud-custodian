@@ -19,7 +19,7 @@ interactions:
       X-Sdk-Date:
       - 20250403T041125Z
     method: GET
-    uri: https://127.0.0.1:3128/v2/ap-southeat-1/instances?limit=10&offset=0
+    uri: https://dms.ap-southeat-1.myhuaweicloud.com/v2/ap-southeat-1/instances?limit=10&offset=0
   response:
     body:
       string: '{

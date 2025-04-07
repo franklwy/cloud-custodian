@@ -19,7 +19,7 @@ interactions:
       X-Sdk-Date:
       - 20250403T042925Z
     method: GET
-    uri: https://127.0.0.1:3128/v2/ap-southeat-1/instances?limit=10&offset=0
+    uri: https://dms.ap-southeat-1.myhuaweicloud.com/v2/ap-southeat-1/instances?limit=10&offset=0
   response:
     body:
       string: '{
@@ -105,7 +105,7 @@ interactions:
       X-Sdk-Date:
       - 20250403T042927Z
     method: DELETE
-    uri: https://127.0.0.1:3128/v2/ap-southeat-1/instances/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    uri: https://dms.ap-southeat-1.myhuaweicloud.com/v2/ap-southeat-1/instances/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   response:
     body:
       string: '{"job_id": "a2fbe480f59a40822ed04ba34eec2380"}'
