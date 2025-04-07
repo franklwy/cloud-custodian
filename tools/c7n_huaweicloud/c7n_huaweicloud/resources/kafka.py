@@ -47,10 +47,10 @@ class TagEntity:
 class Kafka(QueryResourceManager):
     """HuaweiCloud distributed message service Kafka (DMS Kafka) instance resource manager.
 
-    This class is responsible for discovering, filtering,
-         and managing Kafka instance resources on HuaweiCloud.
-    It inherits from QueryResourceManager, utilizing its capabilities to query and process resource
-        lists.
+    This class is responsible for discovering, filtering, and managing Kafka instance resources on 
+    HuaweiCloud.
+    It inherits from QueryResourceManager, utilizing its capabilities to query and process resource 
+    lists.
 
     :example:
     Define a simple policy to get all Kafka instances:
@@ -65,12 +65,12 @@ class Kafka(QueryResourceManager):
     class resource_type(TypeInfo):
         """Define Kafka resource metadata and type information"""
         service = 'kafka'  # Specify corresponding HuaweiCloud service name
-        # Specify API operation, result list key, and pagination parameter(s) for enumerating 
-        # resources
+        # Specify API operation, result list key, and pagination parameter(s) for enumerating resources
         # 'list_instances' is the API method name
         # 'instances' is the field name in the response containing the instance list
         # 'offset' is the parameter name for pagination
-        enum_spec = ('list_instances', 'instances', 'offset', 10)
+        enum_spec = ('list_instances', 'instances', 
+                     'offset', 10)
         id = 'instance_id'  # Specify resource unique identifier field name
         name = 'name'  # Specify resource name field name
         date = 'created_at'  # Specify field name for resource creation time
@@ -81,15 +81,15 @@ class Kafka(QueryResourceManager):
         """
         Enhance original resource data obtained from API.
 
-        This method is mainly used to convert HuaweiCloud API returned tag list format 
-        (usually a dictionary list containing 'key' and 'value' fields)
-        to AWS compatible format (dictionary list containing 'Key' and 'Value' fields) 
-        used by Cloud Custodian internally.
+        This method is mainly used to convert HuaweiCloud API returned tag list format (usually a 
+        dictionary list containing 'key' and 'value' fields)
+        to AWS compatible format (dictionary list containing 'Key' and 'Value' fields) used by Cloud 
+        Custodian internally.
         This improves consistency across cloud provider strategies.
 
         :param resources: Original resource dictionary list obtained from API
-        :return: Enhanced resource dictionary list, where tags are converted to AWS compatible 
-                format under 'Tags' key
+        :return: Enhanced resource dictionary list, where tags are converted to AWS compatible format 
+                under 'Tags' key
         """
         for r in resources:
             # Check if 'tags' key exists in original resource dictionary
@@ -151,8 +151,7 @@ class KafkaAgeFilter(AgeFilter):
               - type: age                   # Filter type
                 days: 30                    # Specify days
                 op: gt                      # Operation, gt means 'greater than' (older than)
-                                            # Other available operation symbols: lt (younger than), 
-                                            # ge,le
+                                            # Other available operation symbols: lt (younger than), ge, le
     """
     # Define this filter's input pattern (schema)
     schema = type_schema(
@@ -195,7 +194,7 @@ class KafkaAgeFilter(AgeFilter):
                 # If parsing as milliseconds timestamp fails, continue to try using dateutil.parser
 
         # If not pure digits or parsing as milliseconds timestamp fails, try using dateutil.parser 
-        # forgeneric time string
+        # for generic time string
         try:
             return parse(str(date_value))  # Ensure input is string
         except Exception as e:
@@ -211,10 +210,8 @@ class KafkaListItemFilter(ListItemFilter):
     """
     Filter list items in resource attributes.
 
-    This filter allows checking value of a key in resource dictionary (must be list) 
-    and filtering based on items in the list.
-    For example, can check if instance is deployed in specific availability zone, 
-    or if it contains specific tags.
+    This filter allows checking value of a key in resource dictionary (must be list) and filtering based on items in the list.
+    For example, can check if instance is deployed in specific availability zone, or if it contains specific tags.
     Inherit from core `ListItemFilter`.
 
     :example:
@@ -227,20 +224,15 @@ class KafkaListItemFilter(ListItemFilter):
             resource: huaweicloud.kafka
             filters:
               - type: list-item             # Filter type
-                key: available_zones # Resource attribute key name to check (value of this key
-                    should be list)
-                # key_path: "[].name"       # (Optional) JMESPath expression, used to extract value 
-                                            # for comparison from list item dictionary
-                                            # If list item is simple type (e.g., string), key_path 
-                                            # isnot needed
-                op: in                      # Comparison operator (e.g.,
-                     in, not-in, contains, eq, ...)
+                key: available_zones        # Resource attribute key name to check (value of this key should be list)
+                # key_path: "[].name"       # (Optional) JMESPath expression, used to extract value for comparison from list item dictionary
+                                            # If list item is simple type (e.g., string), key_path is not needed
+                op: in                      # Comparison operator (e.g., in, not-in, contains, eq, ...)
                 value: ["cn-north-4a", "cn-north-4b"] # Values or value list to compare
 
     List attribute examples for filtering (depends on API returned field):
     - `available_zones`: Availability zone list (usually string list)
-    - `tags`: Tag list (usually dictionary list, need `key_path` like 
-      `[?key=='Environment'].value | [0]` or use `Tags` after `augment`)
+    - `tags`: Tag list (usually dictionary list, need `key_path` like `[?key=='Environment'].value | [0]` or use `Tags` after `augment`)
     - `ipv6_connect_addresses`: IPv6 connection address list
     """
     # Define this filter's input pattern (schema)
@@ -264,9 +256,7 @@ class KafkaListItemFilter(ListItemFilter):
         # key: Resource attribute key name to check, value must be list
         key={'oneOf': [
             {'type': 'string'},
-            {'type
-                ': 'integer', 'minimum': 0}, # Key can also be integer (if resource dictionary key
-                    is integer)
+            {'type': 'integer', 'minimum': 0},  # Key can also be integer (if resource dictionary key is integer)
             {'type': 'array', 'items': {'type': 'string'}}  # Or path list
         ]},
         # key_path: (Optional) JMESPath expression, used to extract comparison value from list item
@@ -322,19 +312,16 @@ class KafkaListItemFilter(ListItemFilter):
                     if isinstance(list_value, dict):
                         compare_value = jmespath.search(key_path, list_value)
                     else:
-                        # If list item is not dictionary and key_path is specified, it might not be 
-                        # correctlyextracted
+                        # If list item is not dictionary and key_path is specified, it might not be correctly extracted
                         # In this case, record warning and skip
                         self.log.warning(
-                            f"Specified key_path '{key_path}', but list item is not dictionary:
-                                {list_value}")
+                            f"Specified key_path '{key_path}', but list item is not dictionary: {list_value}")
                         continue
                 else:
                     # Otherwise, directly use list item itself
                     compare_value = list_value
 
-                # Execute comparison operation, perform appropriate handling based on operator and 
-                # valuetype
+                # Execute comparison operation, perform appropriate handling based on operator and value type
                 match = False
 
                 # Special handling for eq and ne operators when value is list
@@ -344,13 +331,10 @@ class KafkaListItemFilter(ListItemFilter):
                 elif op_name == 'ne' and isinstance(value, list):
                     # When op is ne and value is list, check if compare_value is not in value list
                     match = compare_value not in value
-                # For comparison operators (gt, lt, ge, le) that require single value comparison 
-                # whenvalue is list
+                # For comparison operators (gt, lt, ge, le) that require single value comparison when value is list
                 elif op_name in ('gt', 'lt', 'ge', 'le') and isinstance(value, list):
                     self.log.warning(
-                        f"Operator '{op_name}' is not suitable for comparing with list value
-                            {value}, "
-                        f"this comparison will be skipped")
+                        f"Operator '{op_name}' is not suitable for comparing with list value {value}, this comparison will be skipped")
                     match = False
                 # Normal operator execution
                 else:
@@ -377,8 +361,7 @@ class KafkaConfigComplianceFilter(ValueFilter):
     Check if specific configuration item of Kafka instance meets expected value.
 
     This filter calls HuaweiCloud API to query specified Kafka instance configuration information,
-    then compares actual value of specified configuration item (`key`) with expected value
-        (`value`).
+    then compares actual value of specified configuration item (`key`) with expected value (`value`).
 
     :example:
     Find Kafka instances where 'auto.create.topics.enable' configuration item is not set to 'false':
@@ -400,9 +383,7 @@ class KafkaConfigComplianceFilter(ValueFilter):
         rinherit=ValueFilter.schema,
         # Following attributes extend ValueFilter.schema
         key={'type': 'string'},  # Kafka configuration item name to check
-        op={'enum
-            ': list(OPERATORS.keys()), 'default': 'eq'}, # Comparison operator, default is 'eq'
-                (equal)
+        op={'enum': list(OPERATORS.keys()), 'default': 'eq'},  # Comparison operator, default is 'eq' (equal)
         # Expected value, can be string, boolean, or number
         value={'oneOf': [
             {'type': 'string'},
@@ -424,13 +405,12 @@ class KafkaConfigComplianceFilter(ValueFilter):
 
         # Get HuaweiCloud Kafka service client
         client = local_session(self.manager.session_factory).client('kafka')
-
+        
         for resource in resources:
             instance_id = resource.get('instance_id')
             if not instance_id:
                 log.warning(
-                    f"Skipping Kafka resource missing 'instance_id': "
-                    f"{resource.get('name', 'Unknown Name')}")
+                    f"Skipping Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
                 continue
 
             try:
@@ -457,11 +437,8 @@ class KafkaConfigComplianceFilter(ValueFilter):
                                 actual_value = type(value)(actual_value_str)
                             except (ValueError, TypeError):
                                 log.warning(
-                                    f"Failed to convert Kafka instance {instance_id} configuration
-                                        i"
-                                        f"tem "
-                                    f"'{key}' value '{actual_value_str}' to type
-                                        {type(value).__name__}. "
+                                    f"Failed to convert Kafka instance {instance_id} configuration item "
+                                    f"'{key}' value '{actual_value_str}' to type {type(value).__name__}. "
                                     f"String comparison will be used.")
                                 actual_value = actual_value_str  # Fallback to string comparison
 
@@ -470,8 +447,7 @@ class KafkaConfigComplianceFilter(ValueFilter):
                         break
 
                 if not config_found:
-                    log.warning(
-                        f"Configuration item '{key}' not found in Kafka instance {instance_id}")
+                    log.warning(f"Configuration item '{key}' not found in Kafka instance {instance_id}")
                     resource['KafkaConfig'] = {key: None}
 
             except exceptions.ClientRequestException as e:
@@ -502,8 +478,7 @@ class KafkaJsonDiffFilter(c7n_huaweicloud.filters.revisions.JsonDiff):
     """
     Compare differences between Kafka instance configuration and historical version.
 
-    This filter uses HuaweiCloud Config service to track and provide detailed historical
-        configuration records for comparison.
+    This filter uses HuaweiCloud Config service to track and provide detailed historical configuration records for comparison.
     Used to detect if resource configuration has changed.
 
     :example:
@@ -529,12 +504,9 @@ class KafkaMarkedForOpFilter(Filter):
     """
     Filter Kafka instances based on specific "marked operation" tag.
 
-    This filter is used to find those marked for `mark-for-op` action to perform specific operation 
-    (like delete, stop) at some future time.
-    It checks specified tag key (`tag`), parses operation type and scheduled execution time from tag
-        value,
-    and compares with current time.
-
+    This filter is used to find those marked for `mark-for-op` action to perform specific operation (like delete, stop) at some future time.
+    It checks specified tag key (`tag`), parses operation type and scheduled execution time from tag value, and compares with current time.
+    
     :example:
     Find all Kafka instances marked for deletion, and tag key is 'custodian_cleanup':
 
@@ -547,8 +519,8 @@ class KafkaMarkedForOpFilter(Filter):
               - type: marked-for-op          # Filter type
                 op: delete                  # Operation type to find ('delete', 'stop', 'restart')
                 tag: custodian_cleanup      # Tag key used for marking operation
-                # skew: 1 # (Optional) Time offset (days), allow N days in advance match
-                # skew_hours: 2 # (Optional) Time offset (hours), allow N hours in advance match
+                # skew: 1                   # (Optional) Time offset (days), allow N days in advance match
+                # skew_hours: 2             # (Optional) Time offset (hours), allow N hours in advance match
     """
     # Define this filter's input pattern (schema)
     schema = type_schema(
@@ -610,8 +582,7 @@ class KafkaMarkedForOpFilter(Filter):
             return False
 
         try:
-            # Try to directly parse KafkaMarkForOpAction generated standard timestamp format 
-            # '%Y/%m/%d%H:%M:%S UTC'
+            # Try to directly parse KafkaMarkForOpAction generated standard timestamp format '%Y/%m/%d %H:%M:%S UTC'
             from dateutil.parser import parse
             action_date = parse(action_date_str)
         except Exception:
@@ -662,8 +633,7 @@ class KafkaMarkedForOpFilter(Filter):
                 if isinstance(raw_tags, dict):
                     tags = raw_tags
                 elif isinstance(raw_tags, list):
-                    if all(isinstance(item, dict) and 'key
-                        ' in item and 'value' in item for item in raw_tags):
+                    if all(isinstance(item, dict) and 'key' in item and 'value' in item for item in raw_tags):
                         # Compatible with Huawei Cloud specific [{key: k1, value: v1}] format
                         for item in raw_tags:
                             tags[item['key']] = item['value']
@@ -683,14 +653,11 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
     """
     Add a "marked operation" tag to Kafka instance.
 
-    This action is used to mark resource so that it can be identified and executed by other policy 
-    (using `marked-for-op` filter) at some future time.
-    It will create a tag on resource, tag value contains specified operation (`op`) 
-    and execution timestamp.
+    This action is used to mark resource so that it can be identified and executed by other policy (using `marked-for-op` filter) at some future time.
+    It will create a tag on resource, tag value contains specified operation (`op`) and execution timestamp.
 
     :example:
-    Mark Kafka instances created more than 90 days ago, let them be deleted 7 days later 
-    (need another policy to actually delete with `marked-for-op` filter and `delete` action):
+    Mark Kafka instances created more than 90 days ago, let them be deleted 7 days later (need another policy to actually delete with `marked-for-op` filter and `delete` action):
 
     .. code-block:: yaml
 
@@ -706,8 +673,7 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
                 op: delete                  # Marked operation ('delete', 'stop', 'restart')
                 days: 7                     # Delay execution days (from now)
                 # hours: 0                  # (Optional) Delay execution hours (from now)
-                tag: custodian_cleanup # Marking tag key (should be consistent with `marked-for-op`
-                    filter's tag)
+                tag: custodian_cleanup      # Marking tag key (should be consistent with `marked-for-op` filter's tag)
     """
     # Define this action's input pattern (schema)
     schema = type_schema(
@@ -729,8 +695,7 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
         Perform marked operation on single resource.
 
         :param resource: Kafka instance resource dictionary to mark
-        :return: None or API response (according to base class requirements,
-             but this operation usually does not return specific result)
+        :return: None or API response (according to base class requirements, but this operation usually does not return specific result)
         """
         # Get parameters from policy definition
         op = self.data.get('op')
@@ -740,9 +705,7 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
 
         instance_id = resource.get('instance_id')
         if not instance_id:
-            log.error(
-                f"Failed to mark Kafka resource missing 'instance_id': "
-                f"{resource.get('name', 'Unknown Name')}")
+            log.error(f"Failed to mark Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
             return None
 
         # Calculate scheduled execution time (UTC)
@@ -752,9 +715,7 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
             # Format timestamp string, format must be consistent with TagActionFilter parsing format
             action_time_str = action_time.strftime('%Y/%m/%d %H:%M:%S UTC')
         except OverflowError:
-            log.error(
-                f"Invalid marked operation timestamp calculation for Kafka instance {instance_"
-                f"id} (days={days}, hours={hours})")
+            log.error(f"Invalid marked operation timestamp calculation for Kafka instance {instance_id} (days={days}, hours={hours})")
             return None
 
         # Build tag value, format is "operation_timestamp"
@@ -790,22 +751,16 @@ class KafkaMarkForOpAction(HuaweiCloudBaseAction):
             request.body.tags = [tag_entity]
             # Call API to execute operation
             client.batch_create_or_delete_kafka_tag(request)
-            log.info(
-                f"Added or updated tag for Kafka instance {instance_name} ({instance_id}): {key"
-                f"}={value}")
+            log.info(f"Added or updated tag for Kafka instance {instance_name} ({instance_id}): {key}={value}")
         except exceptions.ClientRequestException as e:
             # Handle API request exception
             log.error(
-                f"Failed to add or update tag {key} for Kafka instance {instance_name}
-                    ({instance_id"
-                    f"}): "
+                f"Failed to add or update tag {key} for Kafka instance {instance_name} ({instance_id}): "
                 f"{e.error_msg} (Status Code: {e.status_code})"
             )
         except Exception as e:
             # Handle other potential exceptions
-            log.error(
-                f"Failed to add or update tag {key} for Kafka instance {instance_name} ({insta"
-                f"nce_id}): {str(e)}")
+            log.error(f"Failed to add or update tag {key} for Kafka instance {instance_name} ({instance_id}): {str(e)}")
 
 
 @Kafka.action_registry.register('auto-tag-user')
@@ -813,17 +768,14 @@ class KafkaAutoTagUser(HuaweiCloudBaseAction):
     """
     (Conceptual) Automatically add creator user tag to Kafka instance.
 
-    **Important Note:** This action depends on resource data containing creator information 
-    (such as 'user_name' field here).
-    HuaweiCloud API returned Kafka instance information **usually does not directly contain creator
-        IAM user name**.
+    **Important Note:** This action depends on resource data containing creator information (such as 'user_name' field here).
+    HuaweiCloud API returned Kafka instance information **usually does not directly contain creator IAM user name**.
     Therefore, the effectiveness of this action depends on whether `QueryResourceManager` 
     or its `augment` method can obtain and fill `user_name` field through other means
     (such as querying CTS operation log service). If unable to obtain, tag value will be 'unknown'.
 
     :example:
-    Add tag 'Creator
-        ' to Kafka instances missing this tag, value is creator user name (if can obtain):
+    Add tag 'Creator' to Kafka instances missing this tag, value is creator user name (if can obtain):
 
     .. code-block:: yaml
 
@@ -841,15 +793,11 @@ class KafkaAutoTagUser(HuaweiCloudBaseAction):
         'auto-tag-user',  # Action type name
         # Specify tag key to add, default is 'CreatorName'
         tag={'type': 'string', 'default': 'CreatorName'},
-        # This action's mode pattern, default is 'resource' (i.e., try to get from resource 
-        # dictionary)
-        # Optional 'account' (might represent current executing policy account, but not meaningful 
-        # inthis context)
+        # This action's mode pattern, default is 'resource' (i.e., try to get from resource dictionary)
+        # Optional 'account' (might represent current executing policy account, but not meaningful in this context)
         mode={'type': 'string', 'enum': ['resource', 'account'], 'default': 'resource'},
-        # If mode is 'resource', specify from resource dictionary to get user name key, default is 
-        # 'creator'
-        user_key={'type
-            ': 'string', 'default': 'creator'},  # Changed to 'creator' might be more general
+        # If mode is 'resource', specify from resource dictionary to get user name key, default is 'creator'
+        user_key={'type': 'string', 'default': 'creator'},  # Changed to 'creator' might be more general
         # Whether to update existing tag, default is True
         update={'type': 'boolean', 'default': True},
         required=[]  # No required parameters (because all have default values)
@@ -894,9 +842,7 @@ class KafkaAutoTagUser(HuaweiCloudBaseAction):
                 # If still unknown, can consider adding logic to query CTS log
                 if user_name == 'unknown':
                     log.warning(
-                        f"Unable to find creator information for Kafka instance {instance_name}
-                            ({in"
-                            f"stance_id}) "
+                        f"Unable to find creator information for Kafka instance {instance_name} ({instance_id}) "
                         f"(tried keys: '{user_key}', 'user_name'). Using 'unknown'.")
         elif mode == 'account':
             log.warning("'account' mode in KafkaAutoTagUser is not fully implemented yet.")
@@ -954,9 +900,7 @@ class KafkaTag(HuaweiCloudBaseAction):
 
         instance_id = resource.get('instance_id')
         if not instance_id:
-            log.error(
-                f"Failed to mark Kafka resource missing 'instance_id': "
-                f"{resource.get('name', 'Unknown Name')}")
+            log.error(f"Failed to mark Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
             return None
 
         # Reuse KafkaMarkForOpAction's helper method
@@ -981,8 +925,7 @@ class KafkaRemoveTag(HuaweiCloudBaseAction):
         policies:
           - name: remove-temp-kafka-tags
             resource: huaweicloud.kafka
-            # Can add filter to ensure only operate on instances containing this tag, improve 
-            # efficiency
+            # Can add filter to ensure only operate on instances containing this tag, improve efficiency
             filters:
               - "tag:Temporary": present
             actions:
@@ -1023,19 +966,15 @@ class KafkaRemoveTag(HuaweiCloudBaseAction):
         instance_id = resource.get('instance_id')
         instance_name = resource.get('name', 'Unknown Name')
         if not instance_id:
-            log.error(f"Failed to remove tag, Kafka resource missing 'instance_id': {instance_name}"
-                )
+            log.error(f"Failed to remove tag, Kafka resource missing 'instance_id': {instance_name}")
             return None
 
-        # Check actual tags existing on instance, avoid trying to delete non-existing tag (although 
-        # APImight allow, it produces unnecessary call)
+        # Check actual tags existing on instance, avoid trying to delete non-existing tag (although API might allow, it produces unnecessary call)
         current_tags = {t.get('Key') for t in resource.get('Tags', [])}
         keys_that_exist = [k for k in tags_to_remove if k in current_tags]
 
         if not keys_that_exist:
-            log.debug(
-                f"Kafka instance {instance_name} ({instance_id}) has no tags to remove: {tags_"
-                f"to_remove}")
+            log.debug(f"Kafka instance {instance_name} ({instance_id}) has no tags to remove: {tags_to_remove}")
             return None
 
         # Call internal method to remove tag
@@ -1066,20 +1005,14 @@ class KafkaRemoveTag(HuaweiCloudBaseAction):
             request.body.tags = tag_entities  # Include tags to delete
             # Call API to execute delete
             client.batch_create_or_delete_kafka_tag(request)
-            log.info(
-                f"Removed tags from Kafka instance {instance_name} ({instance_id}): {keys_to_de"
-                f"lete}")
+            log.info(f"Removed tags from Kafka instance {instance_name} ({instance_id}): {keys_to_delete}")
         except exceptions.ClientRequestException as e:
             log.error(
-                f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name}
-                    ({insta"
-                    f"nce_id}): "
+                f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name} ({instance_id}): "
                 f"{e.error_msg} (Status Code: {e.status_code})"
             )
         except Exception as e:
-            log.error(
-                f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name} ("
-                f"{instance_id}): {str(e)}")
+            log.error(f"Failed to remove tags {keys_to_delete} from Kafka instance {instance_name} ({instance_id}): {str(e)}")
 
 
 @Kafka.action_registry.register('rename-tag')
@@ -1127,16 +1060,13 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
         new_key = self.data.get('new_key')
 
         if old_key == new_key:
-            log.warning(
-                f"Old tag key '{old_key}' and new tag key '{new_key}' are the same, "
-                f"no need to rename.")
+            log.warning(f"Old tag key '{old_key}' and new tag key '{new_key}' are the same, no need to rename.")
             return None
 
         instance_id = resource.get('instance_id')
         instance_name = resource.get('name', 'Unknown Name')
         if not instance_id:
-            log.error(f"Failed to rename tag, Kafka resource missing 'instance_id': {instance_name}"
-                )
+            log.error(f"Failed to rename tag, Kafka resource missing 'instance_id': {instance_name}")
             return None
 
         # Find old tag value
@@ -1149,9 +1079,7 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
 
         # If old tag does not exist, no operation
         if old_value is None:
-            log.info(
-                f"Kafka instance {instance_name} ({instance_id}) does not find tag '{old_key}', "
-                f"skip rename.")
+            log.info(f"Kafka instance {instance_name} ({instance_id}) does not find tag '{old_key}', skip rename.")
             return None
 
         # Check if new tag already exists
@@ -1172,9 +1100,7 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
         remover = KafkaRemoveTag(self.data, self.manager)
         remover._remove_tags_internal(resource, [old_key])
 
-        log.info(
-            f"Renamed Kafka instance {instance_name} ({instance_id}) tag '{old_key}' to '{new_key}'"
-            )
+        log.info(f"Renamed Kafka instance {instance_name} ({instance_id}) tag '{old_key}' to '{new_key}'")
 
         return None
 
@@ -1184,8 +1110,7 @@ class DeleteKafka(HuaweiCloudBaseAction):
     """
     Delete specified Kafka instance.
 
-    **Warning:** This is a destructive operation, permanently deleting Kafka instance and its data.
-        Please use with caution.
+    **Warning:** This is a destructive operation, permanently deleting Kafka instance and its data. Please use with caution.
 
     :example:
     Delete Kafka instances created more than 90 days ago and marked for deletion:
@@ -1236,9 +1161,7 @@ class DeleteKafka(HuaweiCloudBaseAction):
             request = DeleteInstanceRequest(instance_id=instance_id)
             # Call API to execute delete operation
             response = client.delete_instance(request)
-            log.info(
-                f"Started delete Kafka instance {instance_name} ({instance_id}) operation. Resp"
-                f"onse: {response}")
+            log.info(f"Started delete Kafka instance {instance_name} ({instance_id}) operation. Response: {response}")
             return response  # Return API response
         except exceptions.ClientRequestException as e:
             log.error(
@@ -1256,12 +1179,10 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
     """
     Modify Kafka instance configuration item.
 
-    This action allows updating various configuration parameters of Kafka instance, 
-    such as log collection, access control, etc.
+    This action allows updating various configuration parameters of Kafka instance, such as log collection, access control, etc.
     Need to provide a dictionary containing configuration item to modify and its new value.
 
-    **Note:** Please refer to HuaweiCloud DMS Kafka API documentation for supported specific 
-    configuration items and effective values.
+    **Note:** Please refer to HuaweiCloud DMS Kafka API documentation for supported specific configuration items and effective values.
     Incorrect configuration might cause instance function anomaly.
 
     :example:
@@ -1273,14 +1194,12 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
           - name: enable-kafka-log-collection
             resource: huaweicloud.kafka
             filters:
-              - type: config-compliance # Use config compliance filter to find instances needing
-                  modification
+              - type: config-compliance     # Use config compliance filter to find instances needing modification
                 key: enable.log.collection
                 op: eq
                 value: false
             actions:
-              - type: set-monitoring        # Action type (Name might not be accurate, change to '
-                  set-config'?)
+              - type: set-monitoring        # Action type (Name might not be accurate, change to 'set-config'?)
                 config:                     # Dictionary containing configuration items to modify
                   enable.log.collection: "true" # Note: API might expect boolean string format
                   # access.user.enable: "true" # Can modify multiple configuration items at once
@@ -1308,17 +1227,13 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
         instance_id = resource.get('instance_id')
         instance_name = resource.get('name', 'Unknown Name')
         if not instance_id:
-            log.error(
-                f"Failed to modify configuration, Kafka resource missing 'instance_id': "
-                f"{instance_name}")
+            log.error(f"Failed to modify configuration, Kafka resource missing 'instance_id': {instance_name}")
             return None
 
         # Get configuration item dictionary from policy
         config_data = self.data.get('config', {})
         if not config_data:
-            log.warning(
-                f"No 'config' data provided in set-monitoring action, "
-                f"skip instance {instance_name} ({instance_id}).")
+            log.warning(f"No 'config' data provided in set-monitoring action, skip instance {instance_name} ({instance_id}).")
             return None
 
         # Get HuaweiCloud Kafka client
@@ -1332,8 +1247,7 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
             request.body = ModifyInstanceConfigsReq()
 
             # Prepare configuration item list for request
-            # HuaweiCloud Kafka API expects a list of name/value configuration items instead of 
-            # directlysetting attributes on request body
+            # HuaweiCloud Kafka API expects a list of name/value configuration items instead of directly setting attributes on request body
             from huaweicloudsdkkafka.v2.model import ModifyInstanceConfig
             kafka_configs = []
 
@@ -1355,33 +1269,24 @@ class SetKafkaMonitoring(HuaweiCloudBaseAction):
             request.body.kafka_configs = kafka_configs
 
             if not kafka_configs:
-                log.warning(
-                    f"No valid configuration items provided for set-monitoring action, skip "
-                    f"instance {instance_name} ({instance_id}).")
+                log.warning(f"No valid configuration items provided for set-monitoring action, skip instance {instance_name} ({instance_id}).")
                 return None
 
             # Record prepared configuration items (for logging)
             processed_configs = {c.name: c.value for c in kafka_configs}
             log.debug(
-                f"Prepared configuration items for Kafka instance {instance_name} ({instance_id}): "
-                f"{[f'{c.name}={c.value}' for c in kafka_configs]}")
+                f"Prepared configuration items for Kafka instance {instance_name} ({instance_id}): {[f'{c.name}={c.value}' for c in kafka_configs]}")
 
             # Call API to execute modify configuration operation
             response = client.modify_instance_configs(request)
-            log.info(
-                f"Modified configuration for Kafka instance {instance_name} ({instance_id}): {p"
-                f"rocessed_configs}. Response: {response}")
+            log.info(f"Modified configuration for Kafka instance {instance_name} ({instance_id}): {processed_configs}. Response: {response}")
             return response  # Return API response
         except exceptions.ClientRequestException as e:
             log.error(
-                f"Failed to modify Kafka instance {instance_name} ({instance_id}) configuration
-                    {con"
-                    f"fig_data}: "
+                f"Failed to modify Kafka instance {instance_name} ({instance_id}) configuration {config_data}: "
                 f"{e.error_msg} (Status Code: {e.status_code})"
             )
             return None  # Return None if modification failed
         except Exception as e:
-            log.error(
-                f"Failed to modify Kafka instance {instance_name} ({instance_id}) configuratio"
-                f"n: {str(e)}")
+            log.error(f"Failed to modify Kafka instance {instance_name} ({instance_id}) configuration: {str(e)}")
             return None
