@@ -11,7 +11,6 @@ from huaweicloudsdkkafka.v2.model import (
     BatchCreateOrDeleteTagReq,
     ModifyInstanceConfigsRequest,
     ModifyInstanceConfigsReq,
-    ModifyInstanceConfig,
     ShowInstanceConfigsRequest,
 )
 from huaweicloudsdkkafka.v2.model import TagEntity as SDKTagEntity
@@ -72,7 +71,7 @@ class Kafka(QueryResourceManager):
         name = 'name'  # Specify resource name field name
         date = 'created_at'  # Specify field name for resource creation time
         tag = True  # Indicate that this resource supports tags
-        tag_resource_type = 'kafka'  # Specify resource type for querying tags (usually consistent with service)
+        tag_resource_type = 'kafka'  # Specify resource type for querying tags
 
     def augment(self, resources):
         """
@@ -182,15 +181,18 @@ class KafkaAgeFilter(AgeFilter):
                 # Create datetime object from timestamp (UTC)
                 return datetime.utcfromtimestamp(timestamp_s)
             except (ValueError, TypeError, OverflowError) as e:
-                log.debug(f"Failed to parse value '{date_value}' as milliseconds timestamp: {e}")
-                # If parsing as milliseconds timestamp fails, continue to try using dateutil.parser for generic time string
+                log.debug(
+                    f"Failed to parse value '{date_value}' as milliseconds timestamp: {e}")
+                # If parsing as milliseconds timestamp fails, continue to try using dateutil.parser
 
         # If not pure digits or parsing as milliseconds timestamp fails, try using dateutil.parser for generic time string
         try:
             return parse(str(date_value))  # Ensure input is string
         except Exception as e:
             # If parsing fails, record error and return None
-            log.warning(f"Failed to parse creation time '{date_value}' for Kafka instance {resource.get('instance_id', 'Unknown ID')} : {e}")
+            log.warning(
+                f"Failed to parse creation time '{date_value}' for Kafka instance "
+                f"{resource.get('instance_id', 'Unknown ID')} : {e}")
             return None
 
 
@@ -390,16 +392,16 @@ class KafkaConfigComplianceFilter(ValueFilter):
     def process(self, resources, event=None):
         # Initialize base configuration
         key = self.data.get('key')
-        op = self.data.get('op', 'eq')
         value = self.data.get('value')
 
         # Get HuaweiCloud Kafka service client
         client = local_session(self.manager.session_factory).client('kafka')
-        results = []
+        
         for resource in resources:
             instance_id = resource.get('instance_id')
             if not instance_id:
-                log.warning(f"Skipping Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
+                log.warning(
+                    f"Skipping Kafka resource missing 'instance_id': {resource.get('name', 'Unknown Name')}")
                 continue
 
             try:
@@ -426,8 +428,9 @@ class KafkaConfigComplianceFilter(ValueFilter):
                                 actual_value = type(value)(actual_value_str)
                             except (ValueError, TypeError):
                                 log.warning(
-                                    f"Failed to convert Kafka instance {instance_id} configuration item '{key}' value '{actual_value_str}' "
-                                    f"to type {type(value).__name__}. String comparison will be used.")
+                                    f"Failed to convert Kafka instance {instance_id} configuration item "
+                                    f"'{key}' value '{actual_value_str}' to type {type(value).__name__}. "
+                                    f"String comparison will be used.")
                                 actual_value = actual_value_str  # Fallback to string comparison
 
                         # Add configuration value to resource
@@ -440,7 +443,9 @@ class KafkaConfigComplianceFilter(ValueFilter):
 
             except exceptions.ClientRequestException as e:
                 # Handle API request exception
-                log.error(f"Failed to get Kafka instance {instance_id} configuration: {e.error_msg} (Status Code: {e.status_code})")
+                log.error(
+                    f"Failed to get Kafka instance {instance_id} configuration: "
+                    f"{e.error_msg} (Status Code: {e.status_code})")
                 continue
             except Exception as e:
                 # Handle other potential exceptions
@@ -571,7 +576,7 @@ class KafkaMarkedForOpFilter(Filter):
             # Try to directly parse KafkaMarkForOpAction generated standard timestamp format '%Y/%m/%d %H:%M:%S UTC'
             from dateutil.parser import parse
             action_date = parse(action_date_str)
-        except Exception as e:
+        except Exception:
             # If standard parsing fails, try using old format conversion logic
             try:
                 # Old time format conversion logic
@@ -811,7 +816,9 @@ class KafkaAutoTagUser(HuaweiCloudBaseAction):
 
         # Check if update is needed, and whether tag already exists
         if not update and tag_key in [t.get('Key') for t in resource.get('Tags', [])]:
-            log.debug(f"Kafka instance {instance_name} ({instance_id}) already exists tag '{tag_key}' and not allowed to update, skip.")
+            log.debug(
+                f"Kafka instance {instance_name} ({instance_id}) already exists tag '{tag_key}' "
+                f"and not allowed to update, skip.")
             return None
 
         user_name = 'unknown'  # Default value
@@ -1066,13 +1073,13 @@ class KafkaRenameTag(HuaweiCloudBaseAction):
             return None
 
         # Check if new tag already exists
-        new_key_exists = False
         if 'Tags' in resource:
             for tag in resource['Tags']:
                 if tag.get('Key') == new_key:
-                    new_key_exists = True
-                    log.warning(f"Kafka instance {instance_name} ({instance_id}) already exists target tag key '{new_key}'. "
-                                f"Rename operation will overwrite its existing value (if continue execution).")
+                    log.warning(
+                        f"Kafka instance {instance_name} ({instance_id}) already exists "
+                        f"target tag key '{new_key}'. Rename operation will overwrite its "
+                        f"existing value (if continue execution).")
                     break
 
         # 1. Add new tag (using old value)
