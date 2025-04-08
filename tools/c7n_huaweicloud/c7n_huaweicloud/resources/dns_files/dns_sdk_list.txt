@@ -1,0 +1,82 @@
+1. 版本管理
+1.1 查询所有的云解析服务API版本号-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListApiVersions
+1.2 查询指定的云解析服务API版本号-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowApiInfo
+
+2. 公网Zone管理
+2.1 创建单个公网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreatePublicZone
+2.2 删除单个公网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeletePublicZone
+2.3 查询公网Zone列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListPublicZones
+2.4 查询单个公网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowPublicZone
+2.5 查询单个公网Zone的名称服务器-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowPublicZoneNameServer
+2.6 修改单个公网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdatePublicZone
+2.7 设置单个公网Zone状态-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdatePublicZoneStatus
+
+3. 内网Zone管理
+3.1 在内网Zone上关联VPC-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=AssociateRouter
+3.2 创建单个内网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreatePrivateZone
+3.3 删除单个内网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeletePrivateZone
+3.4 在内网Zone上解关联VPC-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DisassociateRouter
+3.5 查询内网Zone列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListPrivateZones
+3.6 查询单个内网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowPrivateZone
+3.7 查询单个内网Zone的名称服务器-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowPrivateZoneNameServer
+3.8 修改单个内网Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdatePrivateZone
+
+4. Record Set管理
+4.1 创建单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateRecordSet
+4.2 删除单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeleteRecordSet
+4.3 查询租户Record Set资源列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListRecordSets
+4.4 查询单个Zone下Record Set列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListRecordSetsByZone
+4.5 查询单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowRecordSet
+4.6 修改单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdateRecordSet
+
+5. Record Set多线路管理
+5.1 批量删除某个Zone下的Record Set资源-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchDeleteRecordSetWithLine
+5.2 批量修改RecordSet-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchUpdateRecordSetWithLine
+5.3 批量线路创建RecordSet-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateRecordSetWithBatchLines
+5.4 创建单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateRecordSetWithLine
+5.5 删除单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeleteRecordSets
+5.6 查询租户Record Set资源列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListRecordSetsWithLine
+5.7 设置Record Set状态-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=SetRecordSetsStatus
+5.8 查询单个Zone下Record Set列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowRecordSetByZone
+5.9 查询单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowRecordSetWithLine
+5.10 修改单个Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdateRecordSets
+
+6. PTR Record管理
+6.1 设置弹性公网IP的PTR记录-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateEipRecordSet
+6.2 查询租户弹性公网IP的PTR记录列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListPtrRecords
+6.3 将弹性公网IP的PTR记录恢复为默认值-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=RestorePtrRecord
+6.4 查询单个弹性公网IP的PTR记录-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowPtrRecordSet
+6.5 修改弹性公网IP的PTR记录-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdatePtrRecord
+
+7. 批量接口管理
+7.1 批量删除Record Set-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchDeleteRecordSets
+7.2 批量删除Zone-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchDeleteZones
+7.3 批量设置Record Set状态-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchSetRecordSetsStatus
+7.4 批量设置Zone状态-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchSetZonesStatus
+
+8. Tag管理
+8.1 为指定实例批量添加或删除标签-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=BatchCreateTag
+8.2 为指定实例添加标签-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateTag
+8.3 删除资源标签-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeleteTag
+8.4 使用标签查询资源实例-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListTag
+8.5 查询指定实例类型的所有标签集合-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListTags
+8.6 查询指定实例的标签信息-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowResourceTag
+
+9. 线路分组管理
+9.1 创建线路分组-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateLineGroup
+9.2 删除线路分组-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeleteLineGroup
+9.3 查询线路分组列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListLineGroups
+9.4 查询线路分组-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowLineGroup
+9.5 更新线路分组-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdateLineGroups
+
+10. 自定义线路管理
+10.1 创建单个自定义线路-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateCustomLine
+10.2 删除单个自定义线路-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeleteCustomLine
+10.3 查询自定义线路-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListCustomLine
+10.4 更新单个自定义线路-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdateCustomLine
+
+11. 名称服务器管理
+11.1 查询名称服务器列表-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListNameServers
+
+12. 配额管理
+12.1 查询租户配额-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ShowDomainQuota
