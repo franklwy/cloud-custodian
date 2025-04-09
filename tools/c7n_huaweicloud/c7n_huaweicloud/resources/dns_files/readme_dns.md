@@ -27,13 +27,11 @@
 
 | Filter | 说明                             | 是否可复用 | 开发状态   | 华为云SDK链接                                                                           | 涉及其他服务 |
 | :----- |:-------------------------------| :--------- | :--------- | :-------------------------------------------------------------------------------------- | :----------- |
-| status | 状态过滤器 (ACTIVE/PENDING_CREATE等) | 需要开发   | 已完成   | [查询公网Zone列表](https://support.huaweicloud.com/api-dns/dns_api_62003.html) | 无           |
-| email  | 邮箱地址过滤器                        | 需要开发   | 已完成   | [查询公网Zone列表](https://support.huaweicloud.com/api-dns/dns_api_62003.html) | 无           |
+
 ## 4. DNS PrivateZone特定Filters (`huaweicloud.dns-privatezone`)
 
 | Filter         | 说明                             | 是否可复用 | 开发状态   | 华为云SDK链接                                                                                                | 涉及其他服务 |
 |:---------------|:-------------------------------| :--------- | :--------- |:--------------------------------------------------------------------------------------------------------|:------|
-| status         | 状态过滤器 (ACTIVE/PENDING_CREATE等) | 需要开发   | 已完成   | [查询内网Zone列表](https://support.huaweicloud.com/api-dns/dns_api_63006.html)        | 无     |
 | vpc-associated | 关联VPC过滤器                       | 需要开发   | 已完成   | [查询内网Zone列表](https://support.huaweicloud.com/api-dns/dns_api_63006.html)        | VPC (虚拟私有云) |
 
 ## 5. DNS RecordSet特定Filters (`huaweicloud.dns-recordset`)
@@ -42,7 +40,6 @@
 | :---------- | :-------------------------------------- | :--------- | :--------- | :------------------------------------------------------------------------------------------------ | :----------- |
 | record-type | 记录类型过滤器 (A, CNAME, MX等)         | 需要开发   | 已完成   | [查询租户Record Set资源列表](https://support.huaweicloud.com/api-dns/dns_api_64003.html) | 无           |
 | zone-id     | 所属Zone ID过滤器                         | 需要开发   | 已完成   | [查询租户Record Set资源列表](https://support.huaweicloud.com/api-dns/dns_api_64003.html) | 无           |
-| status      | 状态过滤器 (ACTIVE/PENDING_CREATE等)    | 需要开发   | 已完成   | [查询租户Record Set资源列表](https://support.huaweicloud.com/api-dns/dns_api_64003.html) | 无           |
 | line-id     | 线路ID过滤器 (用于区分智能解析线路)     | 需要开发   | 已完成  | [查询租户Record Set资源列表](https://support.huaweicloud.com/api-dns/dns_api_64003.html) | 无           |
 
 ## 6. 通用Actions (适用于所有DNS资源)

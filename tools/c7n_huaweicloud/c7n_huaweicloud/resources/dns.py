@@ -73,7 +73,7 @@ class PublicZone(QueryResourceManager):
           - name: dns-publiczone-active
             resource: huaweicloud.dns-publiczone
             filters:
-              - type: status
+              - type: value
                 key: status
                 value: ACTIVE
     """
@@ -102,30 +102,6 @@ class PublicZone(QueryResourceManager):
                 log.warning(f"获取公网域名区域详情失败 ({r.get('name', r.get('id', 'unknown'))}): {e}")
         
         return resources
-
-
-@PublicZone.filter_registry.register('status')
-class PublicZoneStatusFilter(ValueFilter):
-    """公网DNS域名区域状态过滤器。
-    
-    :example:
-    
-    .. code-block:: yaml
-    
-        policies:
-          - name: dns-publiczone-status
-            resource: huaweicloud.dns-publiczone
-            filters:
-              - type: status
-                key: status
-                value: ACTIVE
-    """
-    
-    schema = type_schema('status', rinherit=ValueFilter.schema)
-    schema_alias = True
-    
-    def process(self, resources, event=None):
-        return [r for r in resources if self.match(r.get('status'))]
 
 
 @PublicZone.filter_registry.register('age')
@@ -322,31 +298,6 @@ class PrivateZone(QueryResourceManager):
                 log.warning(f"获取内网域名区域详情失败 ({r.get('name', r.get('id', 'unknown'))}): {e}")
         
         return resources
-
-
-@PrivateZone.filter_registry.register('status')
-class PrivateZoneStatusFilter(ValueFilter):
-    """内网DNS域名区域状态过滤器。
-    
-    :example:
-    
-    .. code-block:: yaml
-    
-        policies:
-          - name: dns-privatezone-status
-            resource: huaweicloud.dns-privatezone
-            filters:
-              - type: status
-                key: status
-                value: ACTIVE
-    """
-    
-    schema = type_schema('status', rinherit=ValueFilter.schema)
-    schema_alias = True
-    
-    def process(self, resources, event=None):
-        print(resources)
-        return [r for r in resources if self.match(r.get('status'))]
 
 
 @PrivateZone.filter_registry.register('vpc-associated')
@@ -680,30 +631,6 @@ class ZoneIdFilter(ValueFilter):
     
     def process(self, resources, event=None):
         return [r for r in resources if self.match(r.get('zone_id'))]
-
-
-@RecordSet.filter_registry.register('status')
-class RecordSetStatusFilter(ValueFilter):
-    """DNS记录集状态过滤器。
-    
-    :example:
-    
-    .. code-block:: yaml
-    
-        policies:
-          - name: dns-recordset-status-active
-            resource: huaweicloud.dns-recordset
-            filters:
-              - type: status
-                key: status
-                value: ACTIVE
-    """
-    
-    schema = type_schema('status', rinherit=ValueFilter.schema)
-    schema_alias = True
-    
-    def process(self, resources, event=None):
-        return [r for r in resources if self.match(r.get('status'))]
 
 
 @RecordSet.filter_registry.register('line-id')
