@@ -79,14 +79,14 @@ class PublicZone(QueryResourceManager):
     """
     
     class resource_type(TypeInfo):
-        service = 'dns'
+        service = 'dns-publiczone'
         enum_spec = ('list_public_zones', 'zones', 'marker')
         id = 'id'
         name = 'name'
         filter_name = 'name'
         filter_type = 'scalar'
         taggable = True
-        tag_resource_type = 'DNS-public_zone'
+        tag_resource_type = 'DNS-publiczone'
         
     def augment(self, resources):
         """增强资源信息，添加标签等。"""
@@ -128,29 +128,6 @@ class PublicZoneStatusFilter(ValueFilter):
         return [r for r in resources if self.match(r.get('status'))]
 
 
-@PublicZone.filter_registry.register('email')
-class PublicZoneEmailFilter(ValueFilter):
-    """公网DNS域名区域邮箱地址过滤器。
-    
-    :example:
-    
-    .. code-block:: yaml
-    
-        policies:
-          - name: dns-publiczone-email
-            resource: huaweicloud.dns-publiczone
-            filters:
-              - type: email
-                value: admin@example.com
-    """
-    
-    schema = type_schema('email', rinherit=ValueFilter.schema)
-    schema_alias = True
-    
-    def process(self, resources, event=None):
-        return [r for r in resources if self.match(r.get('email'))]
-
-
 @PublicZone.filter_registry.register('age')
 class PublicZoneAgeFilter(AgeFilter):
     """公网DNS域名区域创建时间过滤器。
@@ -167,10 +144,9 @@ class PublicZoneAgeFilter(AgeFilter):
                 days: 90
                 op: gt
     """
-    
+
     schema = type_schema('age', rinherit=AgeFilter.schema)
     date_attribute = "created_at"
-
 
 @PublicZone.action_registry.register('delete')
 class DeletePublicZoneAction(HuaweiCloudBaseAction):
@@ -324,19 +300,18 @@ class PrivateZone(QueryResourceManager):
     """
     
     class resource_type(TypeInfo):
-        service = 'dns'
+        service = 'dns-privatezone'
         enum_spec = ('list_private_zones', 'zones', 'marker')
         id = 'id'
         name = 'name'
         filter_name = 'name'
         filter_type = 'scalar'
         taggable = True
-        tag_resource_type = 'DNS-private_zone'
+        tag_resource_type = 'DNS-privatezone'
         
     def augment(self, resources):
         """增强资源信息，添加标签等。"""
         client = self.get_client()
-        
         for r in resources:
             try:
                 request = ShowPrivateZoneRequest(zone_id=r['id'])
@@ -634,7 +609,7 @@ class RecordSet(QueryResourceManager):
     """
     
     class resource_type(TypeInfo):
-        service = 'dns'
+        service = 'dns-recordset'
         enum_spec = ('list_record_sets', 'recordsets', 'marker')
         id = 'id'
         name = 'name'
