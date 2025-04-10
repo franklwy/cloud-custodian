@@ -5,7 +5,6 @@ import logging
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkdns.v2 import (
     # Public Zone Management
-    ListPublicZonesRequest,
     ShowPublicZoneRequest,
     DeletePublicZoneRequest,
     UpdatePublicZoneStatusRequest,
@@ -14,7 +13,6 @@ from huaweicloudsdkdns.v2 import (
     UpdatePublicZoneInfo,
 
     # Private Zone Management
-    ListPrivateZonesRequest,
     ShowPrivateZoneRequest,
     DeletePrivateZoneRequest,
     UpdatePrivateZoneRequest,
@@ -52,11 +50,11 @@ log = logging.getLogger('custodian.huaweicloud.dns')
 @resources.register('dns-publiczone')
 class PublicZone(QueryResourceManager):
     """Huawei Cloud Public DNS Hosted Zone Resource Manager.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-publiczone-active
             resource: huaweicloud.dns-publiczone
@@ -98,11 +96,11 @@ class PublicZone(QueryResourceManager):
 @PublicZone.filter_registry.register('age')
 class PublicZoneAgeFilter(AgeFilter):
     """Public DNS Zone creation time filter.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-publiczone-old
             resource: huaweicloud.dns-publiczone
@@ -127,11 +125,11 @@ class PublicZoneAgeFilter(AgeFilter):
 @PublicZone.action_registry.register('delete')
 class DeletePublicZoneAction(HuaweiCloudBaseAction):
     """Delete Public DNS Zone operation.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-publiczone-delete
             resource: huaweicloud.dns-publiczone
@@ -162,11 +160,11 @@ class DeletePublicZoneAction(HuaweiCloudBaseAction):
 @PublicZone.action_registry.register('update')
 class UpdatePublicZoneAction(HuaweiCloudBaseAction):
     """Update Public DNS Zone properties operation.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-publiczone-update
             resource: huaweicloud.dns-publiczone
@@ -225,11 +223,11 @@ class UpdatePublicZoneAction(HuaweiCloudBaseAction):
 @PublicZone.action_registry.register('set-status')
 class SetPublicZoneStatusAction(HuaweiCloudBaseAction):
     """Set Public DNS Zone status operation.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-publiczone-disable
             resource: huaweicloud.dns-publiczone
@@ -272,11 +270,11 @@ class SetPublicZoneStatusAction(HuaweiCloudBaseAction):
 @resources.register('dns-privatezone')
 class PrivateZone(QueryResourceManager):
     """Huawei Cloud Private DNS Hosted Zone Resource Manager.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-privatezone-active
             resource: huaweicloud.dns-privatezone
@@ -317,11 +315,11 @@ class PrivateZone(QueryResourceManager):
 @PrivateZone.filter_registry.register('vpc-associated')
 class PrivateZoneVpcAssociatedFilter(Filter):
     """Private DNS Zone associated VPC filter.
-    
+
     :example:
-    
+
     .. code-block:: yaml
-    
+
         policies:
           - name: dns-privatezone-vpc
             resource: huaweicloud.dns-privatezone
