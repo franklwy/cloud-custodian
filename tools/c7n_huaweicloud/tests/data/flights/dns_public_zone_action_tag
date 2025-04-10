@@ -123,6 +123,55 @@ interactions:
       - HWWAFSESTIME=1744192038480; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - 54a25573a7141ea64cb1f427d8e1e84e
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - iam.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Sdk-Date:
+      - 20250410T062346Z
+    method: GET
+    uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/auth/domains
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"ca515964541ccf8b84db984611d7cda7"}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 10 Apr 2025 06:23:46 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESTIME=1744266226315; path=/
+      - HWWAFSESID=6999276862ea7515b7; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
       - chunked
       X-Content-Type-Options:
@@ -132,7 +181,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 54a25573a7141ea64cb1f427d8e1e84e
+      - ca515964541ccf8b84db984611d7cda7
       X-XSS-Protection:
       - 1; mode=block;
     status:

@@ -555,13 +555,14 @@ class RecordSet(QueryResourceManager):
           - name: dns-recordset-a-records
             resource: huaweicloud.dns-recordset
             filters:
-              - type: record-type
+              - type: value
+                key: type
                 value: A
     """
     
     class resource_type(TypeInfo):
         service = 'dns-recordset'
-        enum_spec = ('list_record_sets', 'recordsets', 'marker')
+        enum_spec = ('list_record_sets_with_line', 'recordsets', 'marker')
         id = 'id'
         name = 'name'
         filter_name = 'name'
@@ -809,16 +810,11 @@ class SetRecordSetStatusAction(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
         recordset_id = resource['id']
-        zone_id = resource.get('zone_id')
         status = self.data.get('status')
         
-        if not zone_id:
-            self.log.warning(f"无法设置记录集状态，缺少zone_id: {resource.get('name')} (ID: {recordset_id})")
-            return
-        
         try:
-            request_body = SetRecordSetsStatusRequestBody(status=status, recordset_ids=[recordset_id])
-            request = SetRecordSetsStatusRequest(zone_id=zone_id, body=request_body)
+            request_body = SetRecordSetsStatusRequestBody(status=status)
+            request = SetRecordSetsStatusRequest(recordset_id=recordset_id, body=request_body)
             client.set_record_sets_status(request)
             self.log.info(f"成功设置记录集状态为 {status}: {resource.get('name')} (ID: {recordset_id})")
         except exceptions.ClientRequestException as e:
@@ -854,30 +850,37 @@ class BatchSetRecordSetStatusAction(HuaweiCloudBaseAction):
     )
     
     def process(self, resources):
+        """处理批量记录集状态设置。
+        
+        根据SDK的定义，BatchSetRecordSetsStatusRequest只需要一个body参数，
+        里面包含status和recordset_ids。我们不需要zone_id参数。
+        API路径为/v2.1/recordsets/statuses。
+        """
+        if not resources:
+            return resources
+            
         client = self.manager.get_client()
         status = self.data.get('status')
         
-        # 按zone_id分组处理
-        zone_records = {}
-        for r in resources:
-            zone_id = r.get('zone_id')
-            if not zone_id:
-                self.log.warning(f"无法处理记录集，缺少zone_id: {r.get('name')} (ID: {r.get('id')})")
-                continue
-                
-            if zone_id not in zone_records:
-                zone_records[zone_id] = []
-            zone_records[zone_id].append(r)
-        
-        for zone_id, records in zone_records.items():
-            recordset_ids = [r['id'] for r in records]
-            try:
-                request_body = BatchSetRecordSetsStatusRequestBody(status=status, recordset_ids=recordset_ids)
-                request = BatchSetRecordSetsStatusRequest(zone_id=zone_id, body=request_body)
-                client.batch_set_record_sets_status(request)
-                self.log.info(f"成功批量设置区域 {zone_id} 中 {len(recordset_ids)} 个记录集状态为 {status}")
-            except exceptions.ClientRequestException as e:
-                self.log.error(f"批量设置记录集状态失败，区域 {zone_id}: {e}")
-                raise
+        # 收集所有记录集ID
+        recordset_ids = [r.get('id') for r in resources if r.get('id')]
+        if not recordset_ids:
+            self.log.warning(f"没有找到要设置状态的记录集ID")
+            return resources
+            
+        try:
+            request_body = BatchSetRecordSetsStatusRequestBody(status=status, recordset_ids=recordset_ids)
+            request = BatchSetRecordSetsStatusRequest(body=request_body)
+            client.batch_set_record_sets_status(request)
+            self.log.info(f"成功批量设置 {len(recordset_ids)} 个记录集状态为 {status}")
+        except exceptions.ClientRequestException as e:
+            self.log.error(f"批量设置记录集状态失败: {e}")
+            raise
                 
         return resources
+    
+    def perform_action(self, resource):
+        """
+        此方法不会被直接调用，因为我们重写了process方法
+        """
+        pass

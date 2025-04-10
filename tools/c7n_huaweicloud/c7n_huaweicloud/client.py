@@ -102,7 +102,7 @@ from huaweicloudsdkram.v1.region.ram_region import RamRegion
 from huaweicloudsdkdns.v2 import (
     ListPublicZonesRequest,
     ListPrivateZonesRequest,
-    ListRecordSetsRequest,
+    ListRecordSetsWithLineRequest,
     DnsClient
 )
 from huaweicloudsdkdns.v2.region.dns_region import DnsRegion
@@ -520,5 +520,5 @@ class Session:
             request = ListPrivateZonesRequest()
             request.type = "private"
         elif service == 'dns-recordset':
-            request = ListRecordSetsRequest()
+            request = ListRecordSetsWithLineRequest()
         return request

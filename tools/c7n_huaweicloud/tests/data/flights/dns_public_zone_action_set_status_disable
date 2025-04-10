@@ -67,7 +67,7 @@ interactions:
       X-Sdk-Date:
       - 20250409T093109Z
     method: PUT
-    uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13xxxxx00001/statuses/set
+    uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13xxxxx00001/statuses
   response:
     body:
       string: '{"id": "2c9eb1538a138432018a13xxxxx00001", "name": "public-disable.example.com.",
@@ -132,6 +132,61 @@ interactions:
       - HWWAFSESTIME=1744192036611; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - ca2452305dac55d0199e0235e2b10a00
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"status": "DISABLE"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '21'
+      Content-Type:
+      - application/json
+      Host:
+      - dns.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250409T125637Z
+    method: PUT
+    uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13xxxxx00001/statuses
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"dc0f21482a3d9875227257047f8f3157"}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 09 Apr 2025 12:56:37 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=95e7b734b83e0992d7; path=/
+      - HWWAFSESTIME=1744203397968; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
       - chunked
       X-Content-Type-Options:
@@ -141,7 +196,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - ca2452305dac55d0199e0235e2b10a00
+      - dc0f21482a3d9875227257047f8f3157
       X-XSS-Protection:
       - 1; mode=block;
     status:
