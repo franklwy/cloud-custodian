@@ -69,7 +69,15 @@ interactions:
     uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13wwwww00001/tags/toremove
   response:
     body:
-      string: ''
+      string: '{"id": "2c9eb1538a138432018a13wwwww00001", "name": "public-removetag.example.com.",
+        "description": "Public zone with tag to remove", "email": "admin@example.com",
+        "zone_type": "public", "ttl": 300, "serial": 1678886418, "status": "ACTIVE",
+        "record_num": 1, "pool_id": "pubpoolidremtag", "project_id": "0605dc51495c4447b48f5168309f9b5f",
+        "created_at": "2023-03-15T12:00:18Z", "updated_at": "2023-03-15T12:00:18Z",
+        "links": {"self": "https://dns.huaweicloud.com/v2/zones/2c9eb1538a138432018a13wwwww00001"},
+        "masters": [], "router": {"router_id": "null", "status": "PENDING_CREATE"},
+        "tags": [{"key": "toremove", "value": "value"}], "enterprise_project_id":
+        "0"}c'
     headers:
       Connection:
       - keep-alive
@@ -100,13 +108,67 @@ interactions:
       X-Project-Id:
       - ap-southeat-1
       X-Sdk-Date:
-      - 20250409T094721Z
+      - 20250410T083336Z
     method: GET
     uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13wwwww00001
   response:
     body:
-      string: '{"error_msg":"Incorrect IAM authentication information: AK access_key_id
-        failed to reach the limit, forbidden.","error_code":"APIGW.0301","request_id":"01709f2ec75441c9f0fb371ab14d7275"}
+      string: '{"id": "2c9eb1538a138432018a13wwwww00001", "name": "public-removetag.example.com.",
+        "description": "Public zone with tag to remove", "email": "admin@example.com",
+        "zone_type": "public", "ttl": 300, "serial": 1678886418, "status": "ACTIVE",
+        "record_num": 1, "pool_id": "pubpoolidremtag", "project_id": "0605dc51495c4447b48f5168309f9b5f",
+        "created_at": "2023-03-15T12:00:18Z", "updated_at": "2023-03-15T12:00:18Z",
+        "links": {"self": "https://dns.huaweicloud.com/v2/zones/2c9eb1538a138432018a13wwwww00001"},
+        "masters": [], "router": {"router_id": "null", "status": "PENDING_CREATE"},
+        "tags": [{"key": "toremove", "value": "value"}], "enterprise_project_id":
+        "0"}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 10 Apr 2025 08:33:36 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=b265b737b2bc3357a4; path=/
+      - HWWAFSESTIME=1744274016851; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - a07e069053038f248e8ed56bbb2c22f9
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 200
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - iam.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Sdk-Date:
+      - 20250410T084225Z
+    method: GET
+    uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/auth/domains
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"51c010deafd81e2c4e238359720a3141"}
 
         '
     headers:
@@ -115,12 +177,12 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 09 Apr 2025 09:47:21 GMT
+      - Thu, 10 Apr 2025 08:42:25 GMT
       Server:
       - CloudWAF
       Set-Cookie:
-      - HWWAFSESID=da6fe79ea080dbb57f; path=/
-      - HWWAFSESTIME=1744192039696; path=/
+      - HWWAFSESTIME=1744274545815; path=/
+      - HWWAFSESID=ffd717328acbaf0dbd; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
@@ -132,7 +194,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 01709f2ec75441c9f0fb371ab14d7275
+      - 51c010deafd81e2c4e238359720a3141
       X-XSS-Protection:
       - 1; mode=block;
     status:

@@ -71,12 +71,12 @@ interactions:
       X-Project-Id:
       - ap-southeat-1
       X-Sdk-Date:
-      - 20250409T094722Z
+      - 20250410T080542Z
     method: GET
     uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13ggggg00001
   response:
     body:
-      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"c867b94939e38be4151d05cd93f95e0e"}
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"605cdf7a2848dcb9186b5ac196f5507f"}
 
         '
     headers:
@@ -85,12 +85,12 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 09 Apr 2025 09:47:22 GMT
+      - Thu, 10 Apr 2025 08:05:43 GMT
       Server:
       - CloudWAF
       Set-Cookie:
-      - HWWAFSESID=9fdf9857aa954eb007; path=/
-      - HWWAFSESTIME=1744192038480; path=/
+      - HWWAFSESID=75e9d82fb0f69d504f; path=/
+      - HWWAFSESTIME=1744272338552; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
@@ -102,7 +102,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - c867b94939e38be4151d05cd93f95e0e
+      - 605cdf7a2848dcb9186b5ac196f5507f
       X-XSS-Protection:
       - 1; mode=block;
     status:
@@ -120,7 +120,7 @@ interactions:
       Content-Type:
       - application/json
       Cookie:
-      - HWWAFSESID=9fdf9857aa954eb007; HWWAFSESTIME=1744192038480
+      - HWWAFSESID=75e9d82fb0f69d504f; HWWAFSESTIME=1744272338552
       Host:
       - dns.ap-southeast-1.myhuaweicloud.com
       User-Agent:
@@ -128,13 +128,12 @@ interactions:
       X-Project-Id:
       - ap-southeat-1
       X-Sdk-Date:
-      - 20250409T094722Z
+      - 20250410T080543Z
     method: GET
     uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13hhhhh00001
   response:
     body:
-      string: '{"error_msg":"Incorrect IAM authentication information: AK access_key_id
-        failed to reach the limit, forbidden.","error_code":"APIGW.0301","request_id":"c95c7c8ccbb62efcdb9f4774f6a9a265"}
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"7d651f0928bf941e4d6b03a2a1b32ea0"}
 
         '
     headers:
@@ -143,7 +142,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 09 Apr 2025 09:47:22 GMT
+      - Thu, 10 Apr 2025 08:05:43 GMT
       Server:
       - CloudWAF
       Strict-Transport-Security:
@@ -157,7 +156,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - c95c7c8ccbb62efcdb9f4774f6a9a265
+      - 7d651f0928bf941e4d6b03a2a1b32ea0
       X-XSS-Protection:
       - 1; mode=block;
     status:

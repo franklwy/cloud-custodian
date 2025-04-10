@@ -46,7 +46,7 @@ interactions:
       code: 200
       message: success
 - request:
-    body: '{"tag": {"key": "c7n_status", "value": "marked-for-op:delete:1"}}'
+    body: '{"tag": {"key": "c7n_status", "value": "delete_2023-04-01"}}'
     headers:
       Accept:
       - '*/*'
@@ -106,9 +106,14 @@ interactions:
     uri: https://dns.ap-southeast-1.myhuaweicloud.com/v2/zones/2c9eb1538a138432018a13vvvvv00001
   response:
     body:
-      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"4db6cbcaed0919e919cfb255e3eea8d0"}
-
-        '
+      string: '{"id": "2c9eb1538a138432018a13vvvvv00001", "name": "public-mark.example.com.",
+        "description": "Public zone to be marked", "email": "admin@example.com", "zone_type":
+        "public", "ttl": 300, "serial": 1678886417, "status": "ACTIVE", "record_num":
+        1, "pool_id": "pubpoolidmark", "project_id": "0605dc51495c4447b48f5168309f9b5f",
+        "created_at": "2023-03-15T12:00:17Z", "updated_at": "2023-03-15T12:00:17Z",
+        "links": {"self": "https://dns.huaweicloud.com/v2/zones/2c9eb1538a138432018a13vvvvv00001"},
+        "masters": [], "router": {"router_id": "null", "status": "PENDING_CREATE"},
+        "tags": [], "enterprise_project_id": "0"}'
     headers:
       Connection:
       - keep-alive
@@ -134,7 +139,7 @@ interactions:
       X-XSS-Protection:
       - 1; mode=block;
     status:
-      code: 401
+      code: 200
       message: Unauthorized
 - request:
     body: null
@@ -150,12 +155,12 @@ interactions:
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Sdk-Date:
-      - 20250410T062346Z
+      - 20250410T084225Z
     method: GET
     uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/auth/domains
   response:
     body:
-      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"84d53010b4ce6b830bc04c4484eed94b"}
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"bfbcaee78cfd020e7b09a4607c42759f"}
 
         '
     headers:
@@ -164,12 +169,12 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 10 Apr 2025 06:23:46 GMT
+      - Thu, 10 Apr 2025 08:42:25 GMT
       Server:
       - CloudWAF
       Set-Cookie:
-      - HWWAFSESID=184597c3254f4e5f31; path=/
-      - HWWAFSESTIME=1744266225566; path=/
+      - HWWAFSESID=4f5aa7602d5702155f; path=/
+      - HWWAFSESTIME=1744274545172; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
@@ -181,7 +186,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - 84d53010b4ce6b830bc04c4484eed94b
+      - bfbcaee78cfd020e7b09a4607c42759f
       X-XSS-Protection:
       - 1; mode=block;
     status:
