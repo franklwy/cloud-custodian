@@ -957,6 +957,5 @@ class BatchSetRecordSetStatusAction(HuaweiCloudBaseAction):
 
         return resources
 
-
     def perform_action(self, resource):
         pass
