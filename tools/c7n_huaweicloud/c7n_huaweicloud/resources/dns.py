@@ -526,7 +526,8 @@ class AssociateVpcAction(HuaweiCloudBaseAction):
             )
         except exceptions.ClientRequestException as e:
             self.log.error(
-                f"Failed to associate VPC to private zone {resource.get('name')} (ID: {zone_id}): {e}"
+                f"Failed to associate VPC to private zone {resource.get('name')} "
+                f"(ID: {zone_id}): {e}"
             )
             raise
 
