@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from huaweicloud_common import BaseTest
+
+
 # from unittest.mock import patch # For mocking if needed
 
 
@@ -25,7 +27,7 @@ class PublicZoneTest(BaseTest):
         self.assertEqual(resources[0]["name"], "example.com.")
         # Verify VCR: Value should match the 'email' in dns_public_zone_query
         self.assertEqual(resources[0]["email"], "admin@example.com")
-        self.assertTrue("description" in resources[0]) # Verify augment added information
+        self.assertTrue("description" in resources[0])  # Verify augment added information
 
     def test_public_zone_filter_age_match(self):
         """Test Public Zone Age filter - Match"""
@@ -46,7 +48,7 @@ class PublicZoneTest(BaseTest):
 
     def test_public_zone_filter_age_no_match(self):
         """Test Public Zone Age filter - No Match"""
-        factory = self.replay_flight_data("dns_public_zone_filter_age") # Reuse cassette
+        factory = self.replay_flight_data("dns_public_zone_filter_age")  # Reuse cassette
         p = self.load_policy(
             {
                 "name": "dns-public-zone-filter-age-no-match",
@@ -96,8 +98,8 @@ class PublicZoneTest(BaseTest):
         zone_id_to_update = "2c9eb1538a138432018a13zzzzz00001"
         # Verify VCR: Match the initial 'email' in dns_public_zone_action_update
         original_email = "original@example.com"
-        new_email = "new@example.com" # Updated email
-        new_ttl = 7200 # Updated TTL
+        new_email = "new@example.com"  # Updated email
+        new_ttl = 7200  # Updated TTL
         p = self.load_policy(
             {
                 "name": "dns-public-zone-action-update",
@@ -116,7 +118,7 @@ class PublicZoneTest(BaseTest):
         self.assertEqual(len(resources), 1)
         # Assert mainly verifies if the policy correctly filtered the target resource
         self.assertEqual(resources[0]['id'], zone_id_to_update)
-        self.assertEqual(resources[0]['email'], original_email) # Verify email before update
+        self.assertEqual(resources[0]['email'], original_email)  # Verify email before update
         # Verify action success: Manually check VCR cassette
         # dns_public_zone_action_update to confirm
         # PATCH /v2/zones/{zone_id} was called with the correct body
@@ -202,7 +204,7 @@ class PrivateZoneTest(BaseTest):
         self.assertEqual(len(resources), 1)
         # Verify VCR: Match the 'name' in dns_private_zone_query
         self.assertEqual(resources[0]["name"], "query.example.com.")
-        self.assertTrue("routers" in resources[0]) # Verify augment added routers information
+        self.assertTrue("routers" in resources[0])  # Verify augment added routers information
 
     def test_private_zone_filter_vpc_associated_match(self):
         """Test Private Zone associated VPC filter - Match"""
@@ -226,8 +228,8 @@ class PrivateZoneTest(BaseTest):
 
     def test_private_zone_filter_vpc_associated_no_match(self):
         """Test Private Zone associated VPC filter - No Match"""
-        factory = self.replay_flight_data("dns_private_zone_filter_vpc") # Reuse cassette
-        vpc_id_not_associated = "vpc-non-existent-id" # A VPC ID confirmed not associated
+        factory = self.replay_flight_data("dns_private_zone_filter_vpc")  # Reuse cassette
+        vpc_id_not_associated = "vpc-non-existent-id"  # A VPC ID confirmed not associated
         p = self.load_policy(
             {
                 "name": "dns-private-zone-filter-vpc-no-match",
@@ -292,8 +294,8 @@ class PrivateZoneTest(BaseTest):
         # Verify VCR: Match the initial 'ttl' in dns_private_zone_action_update
         original_ttl = 300
         new_ttl = 600
-        new_email = "updated@example.com" # Match the updated value in VCR
-        new_description = "Updated description" # Match the updated value in VCR
+        new_email = "updated@example.com"  # Match the updated value in VCR
+        new_description = "Updated description"  # Match the updated value in VCR
         p = self.load_policy(
             {
                 "name": "dns-private-zone-action-update",
@@ -312,8 +314,8 @@ class PrivateZoneTest(BaseTest):
         self.assertEqual(len(resources), 1)
         # Assert mainly verifies if the policy correctly filtered the target resource
         self.assertEqual(resources[0]['id'], zone_id_to_update)
-        self.assertEqual(resources[0]['email'], original_email) # Verify email before update
-        self.assertEqual(resources[0]['ttl'], original_ttl) # Verify TTL before update
+        self.assertEqual(resources[0]['email'], original_email)  # Verify email before update
+        self.assertEqual(resources[0]['ttl'], original_ttl)  # Verify TTL before update
         # Verify action success: Manually check VCR cassette
         # dns_private_zone_action_update to confirm PATCH /v2/zones/{zone_id} was called
         # with the correct body (ttl=600, email='updated@example.com',
@@ -481,9 +483,9 @@ class RecordSetTest(BaseTest):
             {
                 "name": "dns-record-set-filter-age",
                 "resource": "huaweicloud.dns-recordset",
-                 # Verify VCR: Creation time ('2025-04-08T12:00:14Z') of
-                 # 'new.example.com.' in dns_record_set_filter_age
-                 # should be <= 7 days
+                # Verify VCR: Creation time ('2025-04-08T12:00:14Z') of
+                # 'new.example.com.' in dns_record_set_filter_age
+                # should be <= 7 days
                 "filters": [{"type": "age", "days": 7, "op": "le"}],
             },
             session_factory=factory,
@@ -510,7 +512,7 @@ class RecordSetTest(BaseTest):
                     # Must specify zone_id as well, because the delete record set API
                     # requires zone_id
                     {"type": "value", "key": "zone_id", "value": zone_id_for_delete}
-                 ],
+                ],
                 "actions": ["delete"],
             },
             session_factory=factory,
@@ -536,8 +538,8 @@ class RecordSetTest(BaseTest):
         # Verify VCR: Match the initial 'records' in dns_record_set_action_update
         original_records = ["192.168.1.3"]
         new_ttl = 600
-        new_records = ["192.168.1.4", "192.168.1.5"] # Match the updated value in VCR
-        new_description = "Updated record set" # Match the updated value in VCR
+        new_records = ["192.168.1.4", "192.168.1.5"]  # Match the updated value in VCR
+        new_description = "Updated record set"  # Match the updated value in VCR
         p = self.load_policy(
             {
                 "name": "dns-record-set-action-update",
@@ -560,8 +562,8 @@ class RecordSetTest(BaseTest):
         self.assertEqual(len(resources), 1)
         # Assert mainly verifies if the policy correctly filtered the target resource
         self.assertEqual(resources[0]['id'], recordset_id_to_update)
-        self.assertEqual(resources[0]['ttl'], original_ttl) # Verify TTL before update
-        self.assertEqual(resources[0]['records'], original_records) # Verify records before update
+        self.assertEqual(resources[0]['ttl'], original_ttl)  # Verify TTL before update
+        self.assertEqual(resources[0]['records'], original_records)  # Verify records before update
         # Verify action success: Manually check VCR cassette
         # dns_record_set_action_update to confirm
         # PUT /v2/zones/{zone_id}/recordsets/{recordset_id} was called with the correct
@@ -624,7 +626,7 @@ class RecordSetTest(BaseTest):
             session_factory=factory,
         )
         resources = p.run()
-        self.assertEqual(len(resources), 2) # Verify VCR: Confirm 2 records were filtered
+        self.assertEqual(len(resources), 2)  # Verify VCR: Confirm 2 records were filtered
         for resource in resources:
             self.assertTrue(resource['id'] in recordset_ids)
             # Verify VCR: Confirm initial resource status is DISABLE
@@ -664,7 +666,7 @@ class ReusableFeaturesTest(BaseTest):
 
     def test_filter_value_no_match(self):
         """Test value filter - No Match"""
-        factory = self.replay_flight_data("dns_public_zone_filter_value_email") # Reuse
+        factory = self.replay_flight_data("dns_public_zone_filter_value_email")  # Reuse
         wrong_email = "nonexistent@example.com"
         p = self.load_policy(
             {
@@ -804,7 +806,7 @@ class ReusableFeaturesTest(BaseTest):
                     {"type": "value", "key": "id", "value": zone_id_to_untag},
                     # Ensure the resource actually has this tag before executing removal
                     {f"tag:{tag_to_remove}": "present"}
-                 ],
+                ],
                 "actions": [{"type": "remove-tag", "keys": [tag_to_remove]}],
             },
             session_factory=factory,
@@ -862,7 +864,7 @@ class ReusableFeaturesTest(BaseTest):
         # Use ID from dns_public_zone_action_tag as an example
         # Needs replacement with ID from dns_public_zone_action_auto_tag_user
         zone_id_to_auto_tag = "2c9eb1538a138432018a13yyyyy00001"
-        tag_key = "Creator" # Tag key used for auto-tagging
+        tag_key = "Creator"  # Tag key used for auto-tagging
         p = self.load_policy(
             {
                 "name": "dns-action-auto-tag-user",
@@ -871,7 +873,7 @@ class ReusableFeaturesTest(BaseTest):
                     {"type": "value", "key": "id", "value": zone_id_to_auto_tag},
                     # Optional: Only operate on resources not tagged with Creator
                     {f"tag:{tag_key}": "absent"}
-                 ],
+                ],
                 # update: False means do not update if the tag already exists
                 "actions": [{"type": "auto-tag-user", "tag": tag_key, "update": False}],
             },
@@ -883,4 +885,4 @@ class ReusableFeaturesTest(BaseTest):
         # Verify action success: Requires dns_public_zone_action_auto_tag_user.yaml
         # cassette and manual check if POST /v2/zones/{zone_id}/tags was called,
         # tag value should be "unknown"
-        self.assertTrue(p) # Only verify policy loading
+        self.assertTrue(p)  # Only verify policy loading

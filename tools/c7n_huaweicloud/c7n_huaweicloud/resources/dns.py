@@ -153,7 +153,8 @@ class DeletePublicZoneAction(HuaweiCloudBaseAction):
                 f"Successfully deleted public zone: {resource.get('name')} (ID: {zone_id})"
             )
         except exceptions.ClientRequestException as e:
-            self.log.error(f"Failed to delete public zone {resource.get('name')} (ID: {zone_id}): {e}")
+            self.log.error(
+                f"Failed to delete public zone {resource.get('name')} (ID: {zone_id}): {e}")
             raise
 
 
@@ -216,7 +217,8 @@ class UpdatePublicZoneAction(HuaweiCloudBaseAction):
                 f"Successfully updated public zone: {resource.get('name')} (ID: {zone_id})"
             )
         except exceptions.ClientRequestException as e:
-            self.log.error(f"Failed to update public zone {resource.get('name')} (ID: {zone_id}): {e}")
+            self.log.error(
+                f"Failed to update public zone {resource.get('name')} (ID: {zone_id}): {e}")
             raise
 
 
