@@ -721,7 +721,15 @@ class RecordSetAgeFilter(AgeFilter):
                 op: gt
     """
 
-    schema = type_schema('age', rinherit=AgeFilter.schema)
+    schema = type_schema(
+        'age',
+        op={
+            '$ref': '#/definitions/filters_common/comparison_operators'
+        },
+        days={'type': 'number'},
+        hours={'type': 'number'},
+        minutes={'type': 'number'}
+    )
     date_attribute = "created_at"
 
 
@@ -948,3 +956,7 @@ class BatchSetRecordSetStatusAction(HuaweiCloudBaseAction):
             raise
 
         return resources
+
+
+    def perform_action(self, resource):
+        pass
