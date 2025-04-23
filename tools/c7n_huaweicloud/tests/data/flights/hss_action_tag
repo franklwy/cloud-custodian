@@ -17,7 +17,7 @@ interactions:
       X-Project-Id:
       - ap-southeat-1
       X-Sdk-Date:
-      - 20250423T013343Z
+      - 20250423T054806Z
     method: GET
     uri: https://hss.ap-southeast-1.myhuaweicloud.com/v5/ap-southeat-1/host-management/hosts
   response:
@@ -29,12 +29,61 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 23 Apr 2025 01:33:43 GMT
+      - Wed, 23 Apr 2025 05:48:06 GMT
       Server:
       - CloudWAF
       Set-Cookie:
-      - HWWAFSESTIME=1745372023201; path=/
-      - HWWAFSESID=0927273470383ad039; path=/
+      - HWWAFSESID=15b007938b124ab4fe; path=/
+      - HWWAFSESTIME=1745387284867; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - d688738caeb5c181d48ccd2c59a45ea4
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 200
+      message: success
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - iam.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Sdk-Date:
+      - 20250423T055654Z
+    method: GET
+    uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/auth/domains
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"ae974d2ba0a0e539587f903f38e7d46e"}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 23 Apr 2025 05:56:54 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=aa1be76f1e5364350e; path=/
+      - HWWAFSESTIME=1745387814000; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
@@ -46,10 +95,10 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - bd40d6b34db3d32df99bbf6f0746cb8f
+      - ae974d2ba0a0e539587f903f38e7d46e
       X-XSS-Protection:
       - 1; mode=block;
     status:
-      code: 200
-      message: success
+      code: 401
+      message: Unauthorized
 version: 1

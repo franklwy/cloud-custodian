@@ -17,7 +17,7 @@ interactions:
       X-Project-Id:
       - ap-southeat-1
       X-Sdk-Date:
-      - 20250423T013343Z
+      - 20250423T054806Z
     method: GET
     uri: https://hss.ap-southeast-1.myhuaweicloud.com/v5/ap-southeat-1/host-management/hosts
   response:
@@ -29,12 +29,12 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 23 Apr 2025 01:33:43 GMT
+      - Wed, 23 Apr 2025 05:48:06 GMT
       Server:
       - CloudWAF
       Set-Cookie:
-      - HWWAFSESTIME=1745372023201; path=/
-      - HWWAFSESID=0927273470383ad039; path=/
+      - HWWAFSESID=15b007938b124ab4fe; path=/
+      - HWWAFSESTIME=1745387284867; path=/
       Strict-Transport-Security:
       - max-age=31536000; includeSubdomains;
       Transfer-Encoding:
@@ -46,7 +46,7 @@ interactions:
       X-Frame-Options:
       - SAMEORIGIN
       X-Request-Id:
-      - bd40d6b34db3d32df99bbf6f0746cb8f
+      - d688738caeb5c181d48ccd2c59a45ea4
       X-XSS-Protection:
       - 1; mode=block;
     status:

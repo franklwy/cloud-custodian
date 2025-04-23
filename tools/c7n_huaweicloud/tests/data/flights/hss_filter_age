@@ -1,0 +1,149 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Host:
+      - hss.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250423T095120Z
+    method: GET
+    uri: https://hss.ap-southeast-1.myhuaweicloud.com/v5/ap-southeat-1/host-management/hosts
+  response:
+    body:
+      string: '{"data_list": [{"host_id": "test-host-id-123", "host_name": "test-host", "agent_status": "RUNNING", "protect_info": {"wtp_protection": false}, "public_ip": "192.168.1.100", "private_ip": "10.0.0.100", "agent_install_time": 1672531200, "created_at": 1609459200, "agent_version": "1.0.0", "os_type": "Linux", "os_name": "CentOS 7.9", "cpu_cores": 2, "memory_size": 4096, "tags": [{"key": "environment", "value": "prod"}, {"key": "department", "value": "security"}]}, {"host_id": "test-host-id-456", "host_name": "new-test-host", "agent_status": "RUNNING", "protect_info": {"wtp_protection": false}, "public_ip": "192.168.1.101", "private_ip": "10.0.0.101", "agent_install_time": 1743609600, "created_at": 1743523200, "agent_version": "1.1.0", "os_type": "Linux", "os_name": "CentOS 8.0", "cpu_cores": 4, "memory_size": 8192, "tags": [{"key": "environment", "value": "dev"}]}], "total": 2, "page_info": {"offset": 0, "limit": 100, "total": 2}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '819'
+      Content-Type:
+      - application/json;charset=utf8
+      Date:
+      - Wed, 23 Apr 2025 09:51:20 GMT
+      X-Request-Id:
+      - 57d09e67353ccf25a29f9413be9b039c
+    status:
+      code: 200
+      message: success
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Host:
+      - hss.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250423T095121Z
+    method: GET
+    uri: https://hss.ap-southeast-1.myhuaweicloud.com/v5/ap-southeat-1/host-management/hosts/test-host-id-123
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"b44a92f9a93fc83e6b2fa790a1aa717b"}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 23 Apr 2025 09:51:21 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=bc8587913d281fab37; path=/
+      - HWWAFSESTIME=1744192036386; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - b44a92f9a93fc83e6b2fa790a1aa717b
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Cookie:
+      - HWWAFSESID=bc8587913d281fab37; HWWAFSESTIME=1744192036386
+      Host:
+      - hss.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250423T095122Z
+    method: GET
+    uri: https://hss.ap-southeast-1.myhuaweicloud.com/v5/ap-southeat-1/host-management/hosts/test-host-id-456
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"c84f2347a92fc83e6b2fa790a1aa717b"}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 23 Apr 2025 09:51:22 GMT
+      Server:
+      - CloudWAF
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - c84f2347a92fc83e6b2fa790a1aa717b
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 401
+      message: Unauthorized
+version: 1
