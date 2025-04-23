@@ -55,60 +55,6 @@ class HSS(QueryResourceManager):
                 log.debug(f"Using agent_install_time as register_time for {r['host_id']}: {r['register_time']}")
         return resources
 
-@HSS.filter_registry.register('age')
-class HSSAgeFilter(AgeFilter):
-    """Filter HSS resources based on creation time
-    
-    :example:
-
-    .. code-block:: yaml
-
-        policies:
-          - name: hss-old-instances
-            resource: huaweicloud.hss
-            filters:
-              - type: age
-                days: 90
-                op: gt
-    """
-    
-    schema = type_schema(
-        'age',
-        op={
-            '$ref': '#/definitions/filters_common/comparison_operators'
-        },
-        days={'type': 'number'},
-        hours={'type': 'number'},
-        minutes={'type': 'number'}
-    )
-    date_attribute = "register_time"
-
-    def get_resource_date(self, i):
-        # Support using ecs_instance_id for matching resources (for testing only)
-        if 'ecs_instance_id' in i:
-            if i['ecs_instance_id'] == 'old-instance-id':
-                log.debug(f"Found old instance by ecs_instance_id: {i['ecs_instance_id']}")
-                return datetime.fromtimestamp(1609459200, tz=timezone.utc)  # 2021-01-01
-            elif i['ecs_instance_id'] == 'new-instance-id':
-                log.debug(f"Found new instance by ecs_instance_id: {i['ecs_instance_id']}")
-                return datetime.fromtimestamp(1743523200, tz=timezone.utc)  # 2025-03-30
-                
-        # Try various possible date fields
-        for field in ["register_time", "agent_install_time", "created_at"]:
-            if field in i:
-                timestamp = i[field]
-                log.debug(f"Found date field {field} with value {timestamp}")
-                
-                # Convert timestamp to date object
-                if isinstance(timestamp, int):
-                    return datetime.fromtimestamp(timestamp, tz=timezone.utc)
-                return timestamp
-        
-        log.warning(f"No date field found in resource, keys: {i.keys()}")
-        # Set a default value in mock tests to avoid test failure
-        timestamp = 1609459200  # 2021-01-01
-        return datetime.fromtimestamp(timestamp, tz=timezone.utc)
-
 @HSS.action_registry.register('switch-hosts-protect-status')
 class SwitchHostsProtectStatusAction(HuaweiCloudBaseAction):
     """Action to switch host protection status

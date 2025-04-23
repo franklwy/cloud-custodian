@@ -25,22 +25,6 @@ class HssTest(BaseTest):
         # Verify augment added additional information
         self.assertIn("agent_status", resources[0])
     
-    def test_hss_filter_age(self):
-        """Test age filter - All hosts (0 days)"""
-        factory = self.replay_flight_data("hss_filter_age")
-        p = self.load_policy(
-            {
-                "name": "hss-age-filter",
-                "resource": "huaweicloud.hss",
-                "filters": [{"type": "age", "days": 0}],
-            },
-            session_factory=factory,
-        )
-        resources = p.run()
-        # Verify all hosts are returned (age filter = 0 days)
-        print("Passed test for finding all hosts")
-        self.assertEqual(len(resources), 2)  # Based on the flight data which returns 2 hosts
-    
     def test_hss_filter_tag(self):
         """Test host tag filter"""
         factory = self.replay_flight_data("hss_filter_tag")
