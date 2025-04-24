@@ -40,7 +40,7 @@ pip-wheel-metadata/
 pyvenv.cfg
 junit
 /.vs
-
+huaweicloudsdkhss
 # awscc data files are downloaded when doing a dev install / and packaged up in binary wheels.
 tools/c7n_awscc/c7n_awscc/data/*.json
 
