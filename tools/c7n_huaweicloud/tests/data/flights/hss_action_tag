@@ -22,7 +22,7 @@ interactions:
     uri: https://hss.ap-southeast-1.myhuaweicloud.com/v5/ap-southeat-1/host-management/hosts
   response:
     body:
-      string: '{"data_list":[{"host_id":"test-host-id-123","host_name":"test-host","agent_status":"RUNNING","os_type":"Linux","protect_info":{"wtp_protection":true,"aad_protection":true,"hips_protection":true,"vul_protection":true,"rap_protection":true},"public_ip":"10.0.0.1","private_ip":"192.168.0.1","agent_version":"1.0.0","tags":[{"key":"environment","value":"prod"},{"key":"owner","value":"security-team"}],"enterprise_project_id":"0","register_status":"bind","hostname":"test-host","machine_type":"ECS","os_bit":"64","cpu_cores":2,"agent_create_time":1672531200,"agent_register_time":1672531200,"private_ipv6":"","public_ipv6":"","auto_pay_switch":true,"support_features":[],"created_at":1672531200}],"total_count":1}'
+      string: '{"data_list":[{"host_id":"test-host-id-123","host_name":"test-host","agent_status":"RUNNING","os_type":"Linux","protect_info":{"wtp_protection":true,"aad_protection":true,"hips_protection":true,"vul_protection":true,"rap_protection":true},"public_ip":"10.0.0.1","private_ip":"192.168.0.1","agent_version":"1.0.0","tags":[{"key":"environment","value":"prod"},{"key":"owner","value":"security-team"}],"enterprise_project_id":"0","register_status":"bind","hostname":"test-host","machine_type":"ECS","os_bit":"64","cpu_cores":2,"agent_create_time":1672531200,"agent_register_time":1672531200,"private_ipv6":"","public_ipv6":"","auto_pay_switch":true,"support_features":[],"created_at":1672531200,"id":"test-host-id-123","tag_resource_type":"hss"}],"total_count":1}'
     headers:
       Connection:
       - keep-alive
@@ -69,9 +69,7 @@ interactions:
     uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/auth/domains
   response:
     body:
-      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"ae974d2ba0a0e539587f903f38e7d46e"}
-
-        '
+      string: '{"domains":[{"id":"test-domain-id","name":"test-domain"}]}'
     headers:
       Connection:
       - keep-alive
@@ -99,6 +97,168 @@ interactions:
       X-XSS-Protection:
       - 1; mode=block;
     status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Cookie:
+      - HWWAFSESID=aa1be76f1e5364350e; HWWAFSESTIME=1745387814000
+      Host:
+      - iam.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Domain-Id:
+      - test-domain-id
+      X-Sdk-Date:
+      - 20250424T013442Z
+    method: GET
+    uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/projects?name=ap-southeast-1
+  response:
+    body:
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"ea4d94d06a34d50e630300717ac319ec"}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 24 Apr 2025 01:34:42 GMT
+      Server:
+      - CloudWAF
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - ea4d94d06a34d50e630300717ac319ec
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
       code: 401
       message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Host:
+      - iam.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Domain-Id:
+      - test-domain-id
+      X-Sdk-Date:
+      - 20250423T055655Z
+    method: GET
+    uri: https://iam.ap-southeast-1.myhuaweicloud.com/v3/projects?name=ap-southeast-1
+  response:
+    body:
+      string: '{"projects":[{"id":"ap-southeast-1-project-id","name":"ap-southeast-1"}]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 23 Apr 2025 05:56:55 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=ba1be76f1e5364350e; path=/
+      - HWWAFSESTIME=1745387815000; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - be974d2ba0a0e539587f903f38e7d47e
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"project_id":"ap-southeast-1-project-id","resources":[{"resource_id":"test-host-id-123","resource_type":"hss"}],"tags":[{"key":"CostCenter","value":"Security"}]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '156'
+      Content-Type:
+      - application/json
+      Host:
+      - tms.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250423T055656Z
+    method: POST
+    uri: https://tms.ap-southeast-1.myhuaweicloud.com/v1/ap-southeast-1-project-id/tags/create
+  response:
+    body:
+      string: '{"failed_resources":[]}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 23 Apr 2025 05:56:56 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=ca1be76f1e5364350e; path=/
+      - HWWAFSESTIME=1745387816000; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - cf974d2ba0a0e539587f903f38e7d48f
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 200
+      message: OK
 version: 1

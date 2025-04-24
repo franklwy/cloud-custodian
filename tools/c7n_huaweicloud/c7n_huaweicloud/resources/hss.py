@@ -11,8 +11,6 @@ from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
 from huaweicloudsdkhss.v5 import *
 from huaweicloudsdkhss.v5.model import *
 from huaweicloudsdkcore import exceptions
-from c7n.filters.core import AgeFilter
-from datetime import datetime, timezone
 
 log = logging.getLogger('custodian.huaweicloud.hss')
 
@@ -46,6 +44,8 @@ class HSS(QueryResourceManager):
         # Ensure all important fields are present in resource objects
         for r in resources:
             r['id'] = r.get('host_id')  # Ensure id field exists
+            # Add tag_resource_type for TMS operations
+            r['tag_resource_type'] = self.resource_type.tag_resource_type
             # Preserve register_time field for AgeFilter to use
             if 'register_time' in r:
                 log.debug(f"Resource {r['host_id']} has register_time: {r['register_time']}")
