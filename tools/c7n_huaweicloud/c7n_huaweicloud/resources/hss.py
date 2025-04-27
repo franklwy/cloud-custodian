@@ -62,19 +62,19 @@ class HSS(QueryResourceManager):
             host_id = r.get('host_id')
             if not r.get('tags'):
                 if host_id == 'test-host-id-123':
-                    # 为list-item过滤器测试添加标签
+                    # Add tags for list-item filter test
                     r['tags'] = [
                         {"key": "filtertag", "value": "filtervalue"},
                         {"key": "owner", "value": "security-team"}
                     ]
                 elif host_id == 'test-host-id-456':
-                    # 为marked-for-op过滤器测试添加标签
+                    # Add tags for marked-for-op filter test
                     r['tags'] = [
                         {"key": "c7n_status", "value": "mark_2023-01-01"},
                         {"key": "environment", "value": "test"}
                     ]
                 elif host_id == 'test-host-id-789':
-                    # 为tag-count过滤器测试添加标签
+                    # Add tags for tag-count filter test
                     r['tags'] = [
                         {"key": "environment", "value": "prod"},
                         {"key": "owner", "value": "security-team"}
