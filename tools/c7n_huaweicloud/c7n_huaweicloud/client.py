@@ -106,6 +106,11 @@ from huaweicloudsdkdns.v2 import (
     DnsClient
 )
 from huaweicloudsdkdns.v2.region.dns_region import DnsRegion
+from huaweicloudsdkbms.v1 import (
+    BmsClient,
+    ListBareMetalServersRequest,
+)
+from huaweicloudsdkbms.v1.region.bms_region import BmsRegion
 
 
 log = logging.getLogger("custodian.huaweicloud.client")
@@ -171,6 +176,13 @@ class Session:
                 EcsClient.new_builder()
                 .with_credentials(credentials)
                 .with_region(EcsRegion.value_of(self.region))
+                .build()
+            )
+        elif service == "bms":
+            client = (
+                BmsClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(BmsRegion.value_of(self.region))
                 .build()
             )
         elif service == "er":
@@ -450,6 +462,8 @@ class Session:
             request = ListServersDetailsRequest(
                 not_tags="__type_baremetal"
             )
+        elif service == "bms":
+            request = ListBareMetalServersRequest(limit=1000)
         elif service == "deh":
             request = ListDedicatedHostsRequest()
         elif service == "obs":
