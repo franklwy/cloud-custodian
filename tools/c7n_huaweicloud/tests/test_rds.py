@@ -561,6 +561,294 @@ class RDSTest(BaseTest):
         # 确认调用了 PUT /v3/{project_id}/instances/{instance_id}/configurations
         # 并且请求体包含正确的参数
 
+    def test_postgresql_hba_conf_filter_match(self):
+        """测试 pg_hba.conf 配置过滤器 - 匹配特定配置"""
+        factory = self.replay_flight_data("rds_postgresql_hba_conf_match")
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-hba-conf-match",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-hba-conf",
+                    "has_config": {
+                        "type": "host",
+                        "database": "all",
+                        "user": "all",
+                        "address": "0.0.0.0/0",
+                        "method": "md5"
+                    }
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertGreater(len(resources), 0, "测试 VCR 文件应包含至少一个匹配的 PostgreSQL 实例")
+        # 确认返回的都是 PostgreSQL 类型的实例
+        for resource in resources:
+            self.assertEqual(resource.get('datastore', {}).get('type', '').lower(), 'postgresql')
+
+    def test_postgresql_hba_conf_filter_no_match(self):
+        """测试 pg_hba.conf 配置过滤器 - 无匹配"""
+        factory = self.replay_flight_data("rds_postgresql_hba_conf_no_match")
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-hba-conf-no-match",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-hba-conf",
+                    "has_config": {
+                        "type": "hostssl",  # 使用较少见的配置类型
+                        "database": "specific_db",
+                        "user": "specific_user",
+                        "address": "192.168.1.1",
+                        "method": "scram-sha-256"
+                    }
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 0, "不应有实例匹配该罕见配置")
+
+    # ===========================
+    # Filter Tests (Target Versions)
+    # ===========================
+    def test_postgresql_target_versions_filter_has_targets(self):
+        """测试 PostgreSQL 可升级目标版本过滤器 - 有可用目标版本"""
+        factory = self.replay_flight_data("rds_postgresql_target_versions_has")
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-target-versions-has",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-target-versions",
+                    "has_target_version": True
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertGreater(len(resources), 0, "测试 VCR 文件应包含至少一个有可升级版本的 PostgreSQL 实例")
+        # 确认返回的实例都有可升级版本信息
+        for resource in resources:
+            self.assertTrue('available_upgrade_versions' in resource)
+            self.assertTrue(len(resource['available_upgrade_versions']) > 0)
+
+
+    # ===========================
+    # Filter Tests (Auto Upgrade Policy)
+    # ===========================
+    def test_postgresql_auto_upgrade_policy_enabled(self):
+        """测试 PostgreSQL 内核小版本自动升级策略过滤器 - 已启用"""
+        factory = self.replay_flight_data("rds_postgresql_auto_upgrade_enabled")
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-auto-upgrade-enabled",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-auto-upgrade-policy",
+                    "enabled": True
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertGreater(len(resources), 0,
+                          "测试 VCR 文件应包含至少一个启用了自动升级策略的 PostgreSQL 实例")
+
+    def test_postgresql_auto_upgrade_policy_disabled(self):
+        """测试 PostgreSQL 内核小版本自动升级策略过滤器 - 未启用"""
+        factory = self.replay_flight_data("rds_postgresql_auto_upgrade_disabled")
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-auto-upgrade-disabled",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-auto-upgrade-policy",
+                    "enabled": False
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertGreater(len(resources), 0,
+                          "测试 VCR 文件应包含至少一个禁用了自动升级策略的 PostgreSQL 实例")
+
+
+
+    # ===========================
+    # Action Tests (Modify pg_hba.conf)
+    # ===========================
+    def test_modify_pg_hba_conf_action(self):
+        """测试修改 pg_hba.conf 配置操作"""
+        factory = self.replay_flight_data("rds_action_modify_pg_hba_conf")
+        target_instance_id = "pg-instance-for-hba-conf-test"
+        p = self.load_policy(
+            {
+                "name": "rds-action-modify-pg-hba-conf",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                    {"type": "postgresql-hba-conf"}
+                ],
+                "actions": [{
+                    "type": "modify-pg-hba-conf",
+                    "configs": [
+                        {
+                            "type": "hostssl",
+                            "database": "all",
+                            "user": "all",
+                            "address": "0.0.0.0/0",
+                            "mask": "",
+                            "method": "scram-sha-256",
+                            "priority": 0
+                        }
+                    ]
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
+    # ===========================
+    # Action Tests (Set Kernel Auto Upgrade Policy)
+    # ===========================
+    def test_set_kernel_auto_upgrade_policy_action_enable(self):
+        """测试设置 PostgreSQL 内核小版本自动升级策略操作 - 启用"""
+        factory = self.replay_flight_data("rds_action_set_kernel_auto_upgrade_enable")
+        target_instance_id = "pg-instance-for-auto-upgrade-test"
+        p = self.load_policy(
+            {
+                "name": "rds-action-set-auto-upgrade-enable",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                    {"type": "postgresql-auto-upgrade-policy", "enabled": False}
+                ],
+                "actions": [{
+                    "type": "set-kernel-auto-upgrade-policy",
+                    "switch_option": True
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
+    def test_set_kernel_auto_upgrade_policy_action_disable(self):
+        """测试设置 PostgreSQL 内核小版本自动升级策略操作 - 禁用"""
+        factory = self.replay_flight_data("rds_action_set_kernel_auto_upgrade_disable")
+        target_instance_id = "pg-instance-for-auto-upgrade-disable-test"
+        p = self.load_policy(
+            {
+                "name": "rds-action-set-auto-upgrade-disable",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                    {"type": "postgresql-auto-upgrade-policy", "enabled": True}
+                ],
+                "actions": [{
+                    "type": "set-kernel-auto-upgrade-policy",
+                    "switch_option": False
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
+    # ===========================
+    # Action Tests (Upgrade Major Version)
+    # ===========================
+    def test_upgrade_major_version_action(self):
+        """测试 PostgreSQL 大版本升级操作"""
+        factory = self.replay_flight_data("rds_action_upgrade_major_version")
+        target_instance_id = "pg-instance-for-upgrade-test"
+        target_version = "14.6.1"  # 假设目标版本
+        p = self.load_policy(
+            {
+                "name": "rds-action-upgrade-major-version",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                    {
+                        "type": "postgresql-target-versions",
+                        "has_target_version": True,
+                        "target_version": target_version
+                    }
+                ],
+                "actions": [{
+                    "type": "upgrade-major-version",
+                    "target_version": target_version,
+                    "is_change_private_ip": True,
+                    "statistics_collection_mode": "before_change_private_ip"
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
+    # ===========================
+    # Action Tests (Enable TDE)
+    # ===========================
+    def test_enable_tde_action(self):
+        """测试为 SQL Server 实例开启 TDE 功能"""
+        factory = self.replay_flight_data("rds_action_enable_tde")
+        target_instance_id = "sqlserver-instance-for-tde-test"
+        p = self.load_policy(
+            {
+                "name": "rds-action-enable-tde",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                ],
+                "actions": [{
+                    "type": "enable-tde",
+                    "rotate_day": 30  # 30天轮转一次
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
+    def test_enable_tde_action_with_secret(self):
+        """测试为 SQL Server 实例开启 TDE 功能 - 使用密钥服务"""
+        factory = self.replay_flight_data("rds_action_enable_tde_with_secret")
+        target_instance_id = "sqlserver-instance-for-tde-secret-test"
+        p = self.load_policy(
+            {
+                "name": "rds-action-enable-tde-with-secret",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                ],
+                "actions": [{
+                    "type": "enable-tde",
+                    "rotate_day": 30,
+                    "secret_id": "test-secret-id",
+                    "secret_name": "test-secret-name",
+                    "secret_version": "v1.0"
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
 
 # =========================
 # Reusable Feature Tests

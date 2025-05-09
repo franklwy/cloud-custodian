@@ -17,7 +17,11 @@ from huaweicloudsdkrds.v3 import (
     ShowAutoEnlargePolicyRequest, ShowBackupPolicyRequest, SetBackupPolicyRequest,
     SetBackupPolicyRequestBody, ShowInstanceConfigurationRequest,
     UpdateInstanceConfigurationRequest, UpdateInstanceConfigurationRequestBody, BackupPolicy,
-    SetAutoEnlargePolicyRequest, UpgradeDbVersionNewRequest
+    SetAutoEnlargePolicyRequest, UpgradeDbVersionNewRequest,
+    ListPostgresqlHbaInfoRequest, ModifyPostgresqlHbaConfRequest,
+    ShowAutoUpgradePolicyRequest, SetAutoUpgradePolicyRequest,
+    UpgradeDbMajorVersionRequest, ShowTdeStatusRequest, UpdateTdeStatusRequest,
+    ShowAvailableVersionRequest
 )
 from huaweicloudsdkcore.exceptions import exceptions
 
@@ -969,4 +973,499 @@ class UpdateInstanceParameterAction(HuaweiCloudBaseAction):
         except exceptions.ClientRequestException as e:
             self.log.error(
                 f"无法为RDS实例 {resource['name']} (ID: {instance_id}) 修改参数配置: {e}")
+            raise
+
+
+@RDS.filter_registry.register('postgresql-hba-conf')
+class PostgresqlHbaConfFilter(Filter):
+    """过滤基于pg_hba.conf配置的PostgreSQL RDS实例
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-pg-hba-conf-check
+            resource: huaweicloud.rds
+            filters:
+              - type: postgresql-hba-conf
+                has_config:
+                  type: host
+                  database: all
+                  user: all
+                  address: 0.0.0.0/0
+                  method: md5
+    """
+    schema = type_schema(
+        'postgresql-hba-conf',
+        has_config={
+            'type': 'object',
+            'properties': {
+                'type': {'type': 'string'},
+                'database': {'type': 'string'},
+                'user': {'type': 'string'},
+                'address': {'type': 'string'},
+                'mask': {'type': 'string'},
+                'method': {'type': 'string'}
+            }
+        }
+    )
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client("rds")
+        has_config = self.data.get('has_config')
+        matched_resources = []
+
+        for resource in resources:
+            # 只处理PostgreSQL实例
+            if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
+                continue
+
+            instance_id = resource['id']
+            try:
+                # 查询实例的pg_hba.conf文件配置
+                # API文档: https://support.huaweicloud.com/api-rds/rds_11_0020.html
+                request = ListPostgresqlHbaInfoRequest()
+                request.instance_id = instance_id
+                response = client.list_postgresql_hba_info(request)
+
+                if not has_config:
+                    # 如果没有指定过滤条件，返回所有PostgreSQL实例
+                    matched_resources.append(resource)
+                    continue
+
+                # configs = response.hba_conf_items
+                # match_found = False
+
+                # 检查每一个配置是否匹配过滤条件
+                for config in response.body:
+                    config_match = True
+                    
+                    # 检查每个指定的属性
+                    for key, value in has_config.items():
+                        if key == 'type' and getattr(config, 'type', None) != value:
+                            config_match = False
+                            break
+                        elif key == 'database' and getattr(config, 'database', None) != value:
+                            config_match = False
+                            break
+                        elif key == 'user' and getattr(config, 'user', None) != value:
+                            config_match = False
+                            break
+                        elif key == 'address' and getattr(config, 'address', None) != value:
+                            config_match = False
+                            break
+                        elif key == 'mask' and getattr(config, 'mask', None) != value:
+                            config_match = False
+                            break
+                        elif key == 'method' and getattr(config, 'method', None) != value:
+                            config_match = False
+                            break
+                    
+                    if config_match:
+                        match_found = True
+                        break
+                
+                if match_found:
+                    matched_resources.append(resource)
+            except Exception as e:
+                self.log.error(
+                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置失败: {e}")
+                
+        return matched_resources
+
+
+@RDS.filter_registry.register('postgresql-target-versions')
+class PostgresqlTargetVersionsFilter(Filter):
+    """过滤有可升级目标版本的PostgreSQL RDS实例
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-pg-upgradable-versions
+            resource: huaweicloud.rds
+            filters:
+              - type: postgresql-target-versions
+                has_target_version: true
+    """
+    schema = type_schema(
+        'postgresql-target-versions',
+        has_target_version={'type': 'boolean'},
+        target_version={'type': 'string'}
+    )
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client("rds")
+        has_target_version = self.data.get('has_target_version', True)
+        target_version = self.data.get('target_version')
+        matched_resources = []
+
+        for resource in resources:
+            # 只处理PostgreSQL实例
+            if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
+                continue
+
+            instance_id = resource['id']
+            try:
+                # 查询实例可升级的目标版本
+                # API文档: https://support.huaweicloud.com/api-rds/rds_19_0001.html
+                request = ShowAvailableVersionRequest()
+                request.instance_id = instance_id
+                response = client.list_available_version(request)
+
+                available_versions = response.available_versions
+                
+                # 检查是否有可用的升级版本
+                if has_target_version and not available_versions:
+                    continue
+                
+                if not has_target_version and available_versions:
+                    continue
+                    
+                # 如果指定了特定的目标版本，检查是否可升级到该版本
+                if target_version and target_version not in available_versions:
+                    continue
+                
+                # 保存可升级版本信息，以便后续操作使用
+                resource['available_upgrade_versions'] = available_versions
+                matched_resources.append(resource)
+                
+            except Exception as e:
+                self.log.error(
+                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的可升级版本失败: {e}")
+                
+        return matched_resources
+
+
+@RDS.filter_registry.register('postgresql-auto-upgrade-policy')
+class PostgresqlAutoUpgradePolicyFilter(Filter):
+    """过滤基于内核小版本自动升级策略的PostgreSQL RDS实例
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-pg-auto-upgrade-disabled
+            resource: huaweicloud.rds
+            filters:
+              - type: postgresql-auto-upgrade-policy
+                enabled: false
+    """
+    schema = type_schema(
+        'postgresql-auto-upgrade-policy',
+        enabled={'type': 'boolean'}
+    )
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client("rds")
+        enabled = self.data.get('enabled', True)
+        matched_resources = []
+
+        for resource in resources:
+            # 只处理PostgreSQL实例
+            if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
+                continue
+
+            instance_id = resource['id']
+            try:
+                # 查询实例内核小版本自动升级策略
+                # API文档: https://support.huaweicloud.com/api-rds/rds_05_0043.html
+                request = ShowAutoUpgradePolicyRequest()
+                request.instance_id = instance_id
+                response = client.show_auto_upgrade_policy(request)
+
+                # 根据API响应判断是否启用了自动升级
+                auto_upgrade_enabled = response.switch_option
+
+                if auto_upgrade_enabled == enabled:
+                    matched_resources.append(resource)
+            except Exception as e:
+                self.log.error(
+                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的自动升级策略失败: {e}")
+                # 如果无法获取自动升级策略，假设其未开启
+                if not enabled:
+                    matched_resources.append(resource)
+                
+        return matched_resources
+
+
+
+
+@RDS.action_registry.register('modify-pg-hba-conf')
+class ModifyPgHbaConfAction(HuaweiCloudBaseAction):
+    """修改pg_hba.conf文件的单个或多个配置
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-modify-pg-hba-conf
+            resource: huaweicloud.rds
+            filters:
+              - type: postgresql-hba-conf
+                has_config:
+                  type: host
+                  database: all
+                  user: all
+                  address: 0.0.0.0/0
+                  method: md5
+            actions:
+              - type: modify-pg-hba-conf
+                configs:
+                  - type: hostssl
+                    database: all
+                    user: all
+                    address: 0.0.0.0/0
+                    mask: ""
+                    method: scram-sha-256
+                    priority: 0
+    """
+    schema = type_schema(
+        'modify-pg-hba-conf',
+        required=['configs'],
+        configs={
+            'type': 'array',
+            'items': {
+                'type': 'object',
+                'required': ['type', 'database', 'user', 'address', 'method', 'priority'],
+                'properties': {
+                    'type': {'type': 'string'},
+                    'database': {'type': 'string'},
+                    'user': {'type': 'string'},
+                    'address': {'type': 'string'},
+                    'mask': {'type': 'string'},
+                    'method': {'type': 'string'},
+                    'priority': {'type': 'integer'}
+                }
+            }
+        }
+    )
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        instance_id = resource['id']
+        configs = self.data.get('configs', [])
+        
+        # 只处理PostgreSQL实例
+        if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
+            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过修改pg_hba.conf的操作")
+            return
+            
+        try:
+            # 修改pg_hba.conf文件配置
+            # API文档: https://support.huaweicloud.com/api-rds/rds_11_0021.html
+            request = ModifyPostgresqlHbaConfRequest()
+            request.instance_id = instance_id
+            request.body = configs
+            
+            response = client.modify_pg_hba_conf(request)
+            self.log.info(f"成功修改RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置")
+            return response
+        except Exception as e:
+            self.log.error(f"修改RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置失败: {e}")
+            raise
+
+
+@RDS.action_registry.register('set-kernel-auto-upgrade-policy')
+class SetKernelAutoUpgradePolicyAction(HuaweiCloudBaseAction):
+    """设置PostgreSQL实例内核小版本自动升级策略
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-enable-auto-upgrade
+            resource: huaweicloud.rds
+            filters:
+              - type: postgresql-auto-upgrade-policy
+                enabled: false
+            actions:
+              - type: set-kernel-auto-upgrade-policy
+                switch_option: true
+    """
+    schema = type_schema(
+        'set-kernel-auto-upgrade-policy',
+        required=['switch_option'],
+        switch_option={'type': 'boolean'}
+    )
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        instance_id = resource['id']
+        switch_option = self.data.get('switch_option')
+        
+        # 只处理PostgreSQL实例
+        if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
+            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过设置内核自动升级策略的操作")
+            return
+            
+        try:
+            # 设置实例内核小版本自动升级策略
+            # API文档: https://support.huaweicloud.com/api-rds/rds_05_0042.html
+            request = SetAutoUpgradePolicyRequest()
+            request.instance_id = instance_id
+            request.switch_option = switch_option
+            
+            response = client.set_db_auto_upgrade_policy(request)
+            self.log.info(
+                f"成功为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                f"{'启用' if switch_option else '禁用'}内核小版本自动升级策略")
+            return response
+        except Exception as e:
+            self.log.error(
+                f"无法为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                f"{'启用' if switch_option else '禁用'}内核小版本自动升级策略: {e}")
+            raise
+
+
+@RDS.action_registry.register('upgrade-major-version')
+class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
+    """执行PostgreSQL实例大版本升级
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-upgrade-pg-version
+            resource: huaweicloud.rds
+            filters:
+              - type: postgresql-target-versions
+                has_target_version: true
+                target_version: "14.6.1"
+            actions:
+              - type: upgrade-major-version
+                target_version: "14.6.1"
+                is_change_private_ip: true
+                statistics_collection_mode: "before_change_private_ip"
+    """
+    schema = type_schema(
+        'upgrade-major-version',
+        required=['target_version', 'is_change_private_ip'],
+        target_version={'type': 'string'},
+        is_change_private_ip={'type': 'boolean'},
+        statistics_collection_mode={'type': 'string', 'enum': ['before_change_private_ip', 'after_change_private_ip']}
+    )
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        instance_id = resource['id']
+        target_version = self.data.get('target_version')
+        is_change_private_ip = self.data.get('is_change_private_ip')
+        statistics_collection_mode = self.data.get('statistics_collection_mode', 'before_change_private_ip')
+        
+        # 只处理PostgreSQL实例
+        if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
+            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过大版本升级操作")
+            return
+        
+        # 检查当前实例是否可以升级到目标版本
+        available_versions = resource.get('available_upgrade_versions', [])
+        if available_versions and target_version not in available_versions:
+            self.log.error(
+                f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                f"无法升级到目标版本 {target_version}，可用的升级版本为: {available_versions}")
+            return
+            
+        try:
+            # 执行大版本升级
+            # API文档: https://support.huaweicloud.com/api-rds/rds_19_0005.html
+            request = UpgradeDbMajorVersionRequest()
+            request.instance_id = instance_id
+            
+            # 构建请求体
+            body = {
+                "target_version": target_version,
+                "is_change_private_ip": is_change_private_ip
+            }
+            
+            # 如果选择了切换内网IP，则必须指定统计信息收集方式
+            if is_change_private_ip:
+                body["statistics_collection_mode"] = statistics_collection_mode
+                
+            request.body = body
+            
+            response = client.start_instance_major_version_upgrade(request)
+            self.log.info(
+                f"成功开始RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                f"的大版本升级到 {target_version} 的任务，任务ID: {getattr(response, 'job_id', 'unknown')}")
+            return response
+        except Exception as e:
+            self.log.error(
+                f"无法为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                f"执行大版本升级到 {target_version}: {e}")
+            raise
+
+
+@RDS.action_registry.register('enable-tde')
+class EnableTDEAction(HuaweiCloudBaseAction):
+    """为SQL Server实例开启TDE（透明数据加密）功能
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-enable-tde
+            resource: huaweicloud.rds
+            filters:
+              - type: value
+                key: datastore.type
+                value: SQLServer
+            actions:
+              - type: enable-tde
+    """
+    schema = type_schema(
+        'enable-tde',
+        rotate_day={'type': 'integer', 'minimum': 1, 'maximum': 100000},
+        secret_id={'type': 'string'},
+        secret_name={'type': 'string'},
+        secret_version={'type': 'string'}
+    )
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        instance_id = resource['id']
+        
+        # 检查是否为SQL Server实例
+        if resource.get('datastore', {}).get('type', '').lower() != 'sqlserver':
+            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是SQL Server实例，跳过开启TDE功能")
+            return
+            
+        try:
+            # 开启TDE功能
+            # API文档: https://support.huaweicloud.com/api-rds/rds_06_0045.html
+            # PUT /v3/{project_id}/instances/{instance_id}/tde
+            request = UpdateTdeStatusRequest()
+            request.instance_id = instance_id
+            
+            # 如果需要使用TDE轮转功能，则添加相应参数
+            rotate_day = self.data.get('rotate_day')
+            secret_id = self.data.get('secret_id')
+            secret_name = self.data.get('secret_name')
+            secret_version = self.data.get('secret_version')
+            
+            # 构建请求体，仅在使用轮转功能时添加相关参数
+            body = {}
+            if rotate_day is not None:
+                body['rotate_day'] = rotate_day
+            if secret_id is not None:
+                body['secret_id'] = secret_id
+            if secret_name is not None:
+                body['secret_name'] = secret_name
+            if secret_version is not None:
+                body['secret_version'] = secret_version
+                
+            request.body = body
+            
+            response = client.update_tde_status(request)
+            self.log.info(f"成功为RDS SQL Server实例 {resource['name']} (ID: {instance_id}) 开启TDE功能")
+            return response
+        except Exception as e:
+            self.log.error(f"无法为RDS SQL Server实例 {resource['name']} (ID: {instance_id}) 开启TDE功能: {e}")
             raise
