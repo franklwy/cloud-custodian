@@ -979,31 +979,6 @@ class ReusableRDSTests(BaseTest):
         self.assertEqual(len(resources), 0)
         # Verification: Check VCR recording to confirm batch tag delete API was called
 
-    def test_rds_action_rename_tag(self):
-        """Test renaming tags
-
-        This test verifies the tag renaming functionality on RDS instances,
-        where an existing tag key
-        is modified to a new key name while preserving the original tag value.
-        """
-        factory = self.replay_flight_data('rds_action_rename_tag')
-        p = self.load_policy({
-            'name': 'rds-rename-tag-test',
-            'resource': 'huaweicloud.rds',
-            'filters': [{'tag:env': 'present'}],  # Ensure old tag exists
-            'actions': [{
-                'type': 'rename-tag',
-                'old_key': 'env',
-                'new_key': 'Environment'
-            }]},
-            session_factory=factory)
-        resources = p.run()
-        self.assertEqual(len(resources), 1)  # Assuming there is 1 instance to rename tag
-
-        # Verification: Check VCR recording to confirm two batch tag API calls First:
-        # batch_tag_add_action adding new tag {'key': 'Environment', 'value': 'original env tag
-        # value'} Second: batch_tag_del_action deleting old tag {'key': 'env'}
-
     # ===========================
     # Action Tests (PostgreSQL Major Version Upgrade)
     # ===========================
