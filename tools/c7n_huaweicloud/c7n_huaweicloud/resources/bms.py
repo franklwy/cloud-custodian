@@ -27,7 +27,6 @@ from huaweicloudsdkims.v2 import (
     ListImagesRequest,
 )
 
-
 from c7n import utils
 from c7n.utils import type_schema, local_session
 from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
@@ -57,6 +56,7 @@ class Bms(QueryResourceManager):
                 key: costcenter
                 value: unknown
     """
+
     class resource_type(TypeInfo):
         service = "bms"
         enum_spec = ("list_bare_metal_servers", "servers", "offset")
@@ -342,7 +342,7 @@ class BmsInstanceUserData(ValueFilter):
             except exceptions.ClientRequestException as e:
                 log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
                 continue
-            
+
             if self.match(r):
                 results.append(r)
         return results
@@ -374,7 +374,7 @@ class BmsInstanceEphemeralFilter(Filter):
     def is_ephemeral(self, i):
         # 检查flavor性能类型判断是否为临时存储
         from huaweicloudsdkecs.v2 import NovaShowFlavorExtraSpecsRequest
-        
+
         flavorId = i["flavor"]["id"]
         request = NovaShowFlavorExtraSpecsRequest(flavor_id=flavorId)
         client = local_session(self.manager.session_factory).client("ecs")
@@ -488,8 +488,6 @@ class BmsInstanceEvs(ValueFilter):
 
                 # 将volumes添加到资源中供匹配
                 r['c7n:volumes'] = [v.to_dict() for v in volumes]
-
-
                 if r['c7n:volumes']:
                     for volume in r['c7n:volumes']:
                         if self.match(volume):
@@ -570,14 +568,14 @@ class BmsStart(HuaweiCloudBaseAction):
         if len(resources) > 1000:
             log.error("一次最多能启动1000个裸金属服务器")
             return
-            
+
         client = self.manager.get_client()
         instances = self.filter_resources(resources, "status", self.valid_origin_states)
-        
+
         if not instances:
             log.warning("没有需要启动的裸金属服务器")
             return None
-            
+
         request = self.init_request(instances)
         try:
             response = client.batch_start_baremetal_servers(request)
@@ -590,7 +588,7 @@ class BmsStart(HuaweiCloudBaseAction):
         server_ids = []
         for r in instances:
             server_ids.append(r["id"])
-        
+
         server_info = StartServersInfo(servers=server_ids)
         os_start = OsStartBody(os_start=server_info)
         request = BatchStartBaremetalServersRequest(body=os_start)
@@ -627,14 +625,14 @@ class BmsStop(HuaweiCloudBaseAction):
         if len(resources) > 1000:
             log.error("一次最多能停止1000个裸金属服务器")
             return
-            
+
         client = self.manager.get_client()
         instances = self.filter_resources(resources, "status", self.valid_origin_states)
-        
+
         if not instances:
             log.warning("没有需要停止的裸金属服务器")
             return None
-            
+
         request = self.init_request(instances)
         try:
             response = client.batch_stop_baremetal_servers(request)
@@ -647,7 +645,7 @@ class BmsStop(HuaweiCloudBaseAction):
         server_ids = []
         for r in instances:
             server_ids.append(ServersList(r["id"]))
-        
+
         mode = self.data.get("mode", "SOFT")
         os_stop = OsStopBodyType(type=mode, servers=server_ids)
         body = OsStopBody(os_stop=os_stop)
@@ -685,14 +683,14 @@ class BmsReboot(HuaweiCloudBaseAction):
         if len(resources) > 1000:
             log.error("一次最多能重启1000个裸金属服务器")
             return
-            
+
         client = self.manager.get_client()
         instances = self.filter_resources(resources, "status", self.valid_origin_states)
-        
+
         if not instances:
             log.warning("没有需要重启的裸金属服务器")
             return None
-            
+
         request = self.init_request(instances)
         try:
             response = client.batch_reboot_baremetal_servers(request)
@@ -705,7 +703,7 @@ class BmsReboot(HuaweiCloudBaseAction):
         server_ids = []
         for r in instances:
             server_ids.append(ServersList(r["id"]))
-        
+
         mode = self.data.get("mode", "SOFT")
         os_reboot = ServersInfoType(type=mode, servers=server_ids)
         reboot = RebootBody(reboot=os_reboot)
@@ -714,56 +712,6 @@ class BmsReboot(HuaweiCloudBaseAction):
 
     def perform_action(self, resource):
         return super().perform_action(resource)
-
-
-# @Bms.action_registry.register("instance-terminate")
-# class BmsTerminate(HuaweiCloudBaseAction):
-#     """删除裸金属服务器。
-#
-#     :Example:
-#
-#     .. code-block:: yaml
-#
-#         policies:
-#           - name: terminate-bms-server
-#             resource: huaweicloud.bms
-#             filters:
-#               - type: value
-#                 key: id
-#                 value: "服务器ID"
-#             actions:
-#               - type: instance-terminate
-#                 delete_publicip: true
-#                 delete_volume: false
-#     """
-#
-#     schema = type_schema("instance-terminate",
-#                         delete_publicip={'type': 'boolean'},
-#                         delete_volume={'type': 'boolean'})
-#
-#     def process(self, resources):
-#         client = self.manager.get_client()
-#         delete_publicip = self.data.get('delete_publicip', False)
-#         delete_volume = self.data.get('delete_volume', False)
-#
-#         for resource in resources:
-#             server_id = resource["id"]
-#             delete_body = DeleteBaremetalBody(
-#                 delete_publicip=delete_publicip,
-#                 delete_volume=delete_volume
-#             )
-#             request = DeleteBaremetalServerRequest(server_id=server_id, body=delete_body)
-#             try:
-#                 response = client.delete_baremetal_server(request)
-#                 log.info(f"删除裸金属服务器 {server_id}: {response.to_dict()}")
-#             except exceptions.ClientRequestException as e:
-#                 log.error(f"删除裸金属服务器失败 {server_id}: "
-#                          f"{e.status_code}, {e.request_id}, {e.error_code}, {e.error_msg}")
-#         return resources
-
-    def perform_action(self, resource):
-        # 单个资源操作，由process处理批量资源
-        pass
 
 
 @Bms.action_registry.register("set-instance-profile")
@@ -796,7 +744,7 @@ class BmsSetInstanceProfile(HuaweiCloudBaseAction):
         if not metadata:
             log.warning("未提供元数据")
             return None
-            
+
         metadata_req = UpdateBaremetalServerMetadataReq(metadata=metadata)
         request = UpdateBaremetalServerMetadataRequest(
             server_id=resource["id"], body=metadata_req
