@@ -429,7 +429,7 @@ class RDSTest(BaseTest):
                 "filters": [
                     {"type": "value", "key": "id", "value": target_instance_id}
                 ],
-                "actions": [{"type": "upgrade-db-version", "is_immediately": True}],
+                "actions": [{"type": "upgrade-db-version", "is_delayed": True}],
             },
             session_factory=factory,
         )
