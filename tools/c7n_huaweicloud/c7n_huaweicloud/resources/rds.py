@@ -1175,7 +1175,7 @@ class PostgresqlTargetVersionsFilter(Filter):
 
     def _extract_major_version(self, version_string):
         """从版本字符串中提取大版本号（第一个数字部分）
-        
+
         例如:
         - 从 "12.6.4" 提取 12
         - 从 "10.17.2" 提取 10
@@ -1495,7 +1495,6 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
 
     def _extract_major_version(self, version_string):
         """从版本字符串中提取大版本号（第一个数字部分）
-        
         例如:
         - 从 "12.6.4" 提取 12
         - 从 "10.17.2" 提取 10
