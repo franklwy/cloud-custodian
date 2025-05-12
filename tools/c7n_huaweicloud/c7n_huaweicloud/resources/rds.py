@@ -719,7 +719,7 @@ class UpgradeDBVersionAction(HuaweiCloudBaseAction):
     """
     schema = type_schema(
         'upgrade-db-version',
-        is_immediately={'type': 'boolean'},
+        is_delayed={'type': 'boolean'},
         target_version={'type': 'string'},
         set_backup={'type': 'boolean'}
     )

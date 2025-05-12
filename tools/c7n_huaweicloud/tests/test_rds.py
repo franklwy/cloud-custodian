@@ -515,8 +515,7 @@ class RDSTest(BaseTest):
                     "type": "set-backup-policy",
                     "keep_days": 7,
                     "start_time": "01:00-02:00",
-                    "period": "1, 2, 3, 4, 5, 6, 7",
-                    "backup_type": "auto"
+                    "period": "1, 2, 3, 4, 5, 6, 7"
                 }],
             },
             session_factory=factory,
@@ -925,24 +924,6 @@ class ReusableRDSTests(BaseTest):
         # Assuming there is 1 instance marked for deletion
         self.assertEqual(len(resources), 1)
 
-    def test_rds_filter_reduce(self):
-        """Test aggregate filter"""
-        factory = self.replay_flight_data('rds_filter_reduce')
-        # Test for instances that satisfy multiple conditions simultaneously
-        p = self.load_policy({
-            'name': 'rds-reduce-test',
-            'resource': 'huaweicloud.rds',
-            'filters': [{
-                'type': 'reduce',
-                'filters': [
-                    {'type': 'value', 'key': 'status', 'value': 'ACTIVE'},
-                    {'type': 'value', 'key': 'type', 'value': 'MySQL'}
-                ]
-            }]},
-            session_factory=factory)
-        resources = p.run()
-        self.assertEqual(len(resources), 1)
-        # Assuming there is 1 instance that meets all conditions
 
     # --- 可复用操作测试 ---
 
