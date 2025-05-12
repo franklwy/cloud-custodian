@@ -20,7 +20,7 @@ from huaweicloudsdkrds.v3 import (
     SetAutoEnlargePolicyRequest, UpgradeDbVersionNewRequest,
     ListPostgresqlHbaInfoRequest, ModifyPostgresqlHbaConfRequest,
     ShowAutoUpgradePolicyRequest, SetAutoUpgradePolicyRequest,
-    UpgradeDbMajorVersionRequest, ShowTdeStatusRequest, UpdateTdeStatusRequest,
+    UpgradeDbMajorVersionRequest, UpdateTdeStatusRequest,
     ShowAvailableVersionRequest
 )
 from huaweicloudsdkcore.exceptions import exceptions
@@ -31,6 +31,7 @@ log = logging.getLogger("custodian.huaweicloud.resources.rds")
 # Define a local TagEntity class to simplify tag operations
 class TagEntity:
     """Simple tag structure to represent key-value pairs"""
+
     def __init__(self, key, value=None):
         """
         Initialize a tag entity
@@ -1040,7 +1041,7 @@ class PostgresqlHbaConfFilter(Filter):
                 # 检查每一个配置是否匹配过滤条件
                 for config in response.body:
                     config_match = True
-                    
+
                     # 检查每个指定的属性
                     for key, value in has_config.items():
                         if key == 'type' and getattr(config, 'type', None) != value:
@@ -1061,17 +1062,18 @@ class PostgresqlHbaConfFilter(Filter):
                         elif key == 'method' and getattr(config, 'method', None) != value:
                             config_match = False
                             break
-                    
+
                     if config_match:
                         match_found = True
                         break
-                
+
                 if match_found:
                     matched_resources.append(resource)
             except Exception as e:
                 self.log.error(
-                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置失败: {e}")
-                
+                    f"获取RDS PostgreSQL实例 {resource['name']} "
+                    f"(ID: {instance_id}) 的pg_hba.conf配置失败: {e}")
+
         return matched_resources
 
 
@@ -1105,21 +1107,22 @@ class PostgresqlTargetVersionsFilter(Filter):
                 continue
 
             instance_id = resource['id']
-            
+
             # 获取实例当前的版本号
             current_version = resource.get('datastore', {}).get('version', '')
             if not current_version:
                 self.log.debug(
                     f"无法获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的当前版本")
                 continue
-                
+
             # 提取当前大版本号（只取第一个数字部分）
             current_major_version = self._extract_major_version(current_version)
             if current_major_version is None:
                 self.log.debug(
-                    f"无法解析RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的大版本号: {current_version}")
+                    f"无法解析RDS PostgreSQL实例 {resource['name']} "
+                    f"(ID: {instance_id}) 的大版本号: {current_version}")
                 continue
-            
+
             try:
                 # 查询实例可升级的目标版本
                 # API文档: https://support.huaweicloud.com/api-rds/rds_19_0001.html
@@ -1130,44 +1133,46 @@ class PostgresqlTargetVersionsFilter(Filter):
                 available_versions = response.available_versions
                 if not available_versions:
                     self.log.debug(
-                        f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 没有可用的升级版本")
+                        f"RDS PostgreSQL实例 {resource['name']}"
+                        f" (ID: {instance_id}) 没有可用的升级版本")
                     continue
-                
+
                 # 提取所有可用版本的大版本号
                 available_major_versions = set()
                 for version in available_versions:
                     major_version = self._extract_major_version(version)
                     if major_version is not None:
                         available_major_versions.add(major_version)
-                
+
                 if not available_major_versions:
                     self.log.debug(
                         f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                         f"没有可解析的大版本号: {available_versions}")
                     continue
-                
+
                 # 获取最新的大版本号
                 latest_major_version = max(available_major_versions)
-                
+
                 # 如果当前大版本号小于最新的大版本号，则添加到结果中
                 if current_major_version < latest_major_version:
                     self.log.info(
                         f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                         f"的当前版本 {current_version} (大版本: {current_major_version}) "
                         f"不是最新的大版本 {latest_major_version}")
-                    
+
                     # 为资源添加版本信息，便于后续处理
                     resource['current_major_version'] = current_major_version
                     resource['latest_major_version'] = latest_major_version
                     resource['available_upgrade_versions'] = available_versions
                     matched_resources.append(resource)
-                
+
             except Exception as e:
                 self.log.error(
-                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的可升级版本失败: {e}")
-                
+                    f"获取RDS PostgreSQL实例 {resource['name']}"
+                    f" (ID: {instance_id}) 的可升级版本失败: {e}")
+
         return matched_resources
-    
+
     def _extract_major_version(self, version_string):
         """从版本字符串中提取大版本号（第一个数字部分）
         
@@ -1177,13 +1182,13 @@ class PostgresqlTargetVersionsFilter(Filter):
         """
         if not version_string:
             return None
-            
+
         # 尝试从版本字符串中提取第一个数字部分
         import re
         match = re.match(r'^(\d+)', version_string)
         if match:
             return int(match.group(1))
-        
+
         return None
 
 
@@ -1232,14 +1237,13 @@ class PostgresqlAutoUpgradePolicyFilter(Filter):
                     matched_resources.append(resource)
             except Exception as e:
                 self.log.error(
-                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的自动升级策略失败: {e}")
+                    f"获取RDS PostgreSQL实例 {resource['name']}"
+                    f" (ID: {instance_id}) 的自动升级策略失败: {e}")
                 # 如果无法获取自动升级策略，假设其未开启
                 if not enabled:
                     matched_resources.append(resource)
-                
+
         return matched_resources
-
-
 
 
 @RDS.action_registry.register('modify-pg-hba-conf')
@@ -1297,24 +1301,27 @@ class ModifyPgHbaConfAction(HuaweiCloudBaseAction):
         client = self.manager.get_client()
         instance_id = resource['id']
         configs = self.data.get('configs', [])
-        
+
         # 只处理PostgreSQL实例
         if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
-            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过修改pg_hba.conf的操作")
+            self.log.warning(f"实例 {resource['name']}"
+                             f" (ID: {instance_id}) 不是PostgreSQL实例，跳过修改pg_hba.conf的操作")
             return
-            
+
         try:
             # 修改pg_hba.conf文件配置
             # API文档: https://support.huaweicloud.com/api-rds/rds_11_0021.html
             request = ModifyPostgresqlHbaConfRequest()
             request.instance_id = instance_id
             request.body = configs
-            
+
             response = client.modify_postgresql_hba_conf(request)
-            self.log.info(f"成功修改RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置")
+            self.log.info(f"成功修改RDS PostgreSQL实例 {resource['name']}"
+                          f" (ID: {instance_id}) 的pg_hba.conf配置")
             return response
         except Exception as e:
-            self.log.error(f"修改RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置失败: {e}")
+            self.log.error(f"修改RDS PostgreSQL实例 {resource['name']}"
+                           f" (ID: {instance_id}) 的pg_hba.conf配置失败: {e}")
             raise
 
 
@@ -1346,19 +1353,20 @@ class SetKernelAutoUpgradePolicyAction(HuaweiCloudBaseAction):
         client = self.manager.get_client()
         instance_id = resource['id']
         switch_option = self.data.get('switch_option')
-        
+
         # 只处理PostgreSQL实例
         if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
-            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过设置内核自动升级策略的操作")
+            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) "
+                             f"不是PostgreSQL实例，跳过设置内核自动升级策略的操作")
             return
-            
+
         try:
             # 设置实例内核小版本自动升级策略
             # API文档: https://support.huaweicloud.com/api-rds/rds_05_0042.html
             request = SetAutoUpgradePolicyRequest()
             request.instance_id = instance_id
             request.switch_option = switch_option
-            
+
             response = client.set_auto_upgrade_policy(request)
             self.log.info(
                 f"成功为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
@@ -1395,7 +1403,9 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
         required=['target_version', 'is_change_private_ip'],
         target_version={'type': 'string'},
         is_change_private_ip={'type': 'boolean'},
-        statistics_collection_mode={'type': 'string', 'enum': ['before_change_private_ip', 'after_change_private_ip']}
+        statistics_collection_mode={'type': 'string',
+                                    'enum': ['before_change_private_ip',
+                                             'after_change_private_ip']}
     )
 
     def perform_action(self, resource):
@@ -1403,16 +1413,19 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
         instance_id = resource['id']
         target_version = self.data.get('target_version')
         is_change_private_ip = self.data.get('is_change_private_ip')
-        statistics_collection_mode = self.data.get('statistics_collection_mode', 'before_change_private_ip')
-        
+        statistics_collection_mode = (self.data.
+                                      get('statistics_collection_mode',
+                                          'before_change_private_ip'))
+
         # 只处理PostgreSQL实例
         if resource.get('datastore', {}).get('type', '').lower() != 'postgresql':
-            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过大版本升级操作")
+            self.log.warning(f"实例 {resource['name']}"
+                             f" (ID: {instance_id}) 不是PostgreSQL实例，跳过大版本升级操作")
             return
-        
+
         # 获取可用的升级版本
         available_versions = resource.get('available_upgrade_versions', [])
-        
+
         # 如果没有可用版本信息，则从API获取
         if not available_versions:
             try:
@@ -1420,7 +1433,7 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
                 request.instance_id = instance_id
                 response = client.show_available_version(request)
                 available_versions = response.available_versions
-                
+
                 # 如果仍然没有可用的升级版本，则退出
                 if not available_versions:
                     self.log.error(
@@ -1429,16 +1442,17 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
                     return
             except Exception as e:
                 self.log.error(
-                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的可用升级版本失败: {e}")
+                    f"获取RDS PostgreSQL实例 {resource['name']}"
+                    f" (ID: {instance_id}) 的可用升级版本失败: {e}")
                 return
-        
+
         # 验证目标版本是否在可用的升级版本列表中
         if target_version not in available_versions:
             self.log.error(
                 f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                 f"无法升级到目标版本 {target_version}，可用的升级版本为: {available_versions}")
             return
-        
+
         # 验证目标版本大版本号是否大于当前大版本号
         current_major_version = resource.get('current_major_version')
         if current_major_version is not None:
@@ -1448,36 +1462,37 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
                 self.log.warning(
                     f"目标版本 {target_version} (大版本: {target_major_version}) "
                     f"不大于当前大版本 {current_major_version}，这可能不是大版本升级")
-            
+
         try:
             # 执行大版本升级
             # API文档: https://support.huaweicloud.com/api-rds/rds_19_0005.html
             request = UpgradeDbMajorVersionRequest()
             request.instance_id = instance_id
-            
+
             # 构建请求体
             body = {
                 "target_version": target_version,
                 "is_change_private_ip": is_change_private_ip
             }
-            
+
             # 如果选择了切换内网IP，则必须指定统计信息收集方式
             if is_change_private_ip:
                 body["statistics_collection_mode"] = statistics_collection_mode
-                
+
             request.body = body
-            
+
             response = client.upgrade_db_major_version(request)
             self.log.info(
                 f"成功开始RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
-                f"的大版本升级到 {target_version} 的任务，任务ID: {getattr(response, 'job_id', 'unknown')}")
+                f"的大版本升级到 {target_version} 的任务，任务ID:"
+                f" {getattr(response, 'job_id', 'unknown')}")
             return response
         except Exception as e:
             self.log.error(
                 f"无法为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                 f"执行大版本升级到 {target_version}: {e}")
             raise
-    
+
     def _extract_major_version(self, version_string):
         """从版本字符串中提取大版本号（第一个数字部分）
         
@@ -1487,13 +1502,13 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
         """
         if not version_string:
             return None
-            
+
         # 尝试从版本字符串中提取第一个数字部分
         import re
         match = re.match(r'^(\d+)', version_string)
         if match:
             return int(match.group(1))
-        
+
         return None
 
 
@@ -1526,25 +1541,26 @@ class EnableTDEAction(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
         instance_id = resource['id']
-        
+
         # 检查是否为SQL Server实例
         if resource.get('datastore', {}).get('type', '').lower() != 'sqlserver':
-            self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是SQL Server实例，跳过开启TDE功能")
+            self.log.warning(f"实例 {resource['name']}"
+                             f" (ID: {instance_id}) 不是SQL Server实例，跳过开启TDE功能")
             return
-            
+
         try:
             # 开启TDE功能
             # API文档: https://support.huaweicloud.com/api-rds/rds_06_0045.html
             # PUT /v3/{project_id}/instances/{instance_id}/tde
             request = UpdateTdeStatusRequest()
             request.instance_id = instance_id
-            
+
             # 如果需要使用TDE轮转功能，则添加相应参数
             rotate_day = self.data.get('rotate_day')
             secret_id = self.data.get('secret_id')
             secret_name = self.data.get('secret_name')
             secret_version = self.data.get('secret_version')
-            
+
             # 构建请求体，仅在使用轮转功能时添加相关参数
             body = {}
             if rotate_day is not None:
@@ -1555,12 +1571,14 @@ class EnableTDEAction(HuaweiCloudBaseAction):
                 body['secret_name'] = secret_name
             if secret_version is not None:
                 body['secret_version'] = secret_version
-                
+
             request.body = body
-            
+
             response = client.update_tde_status(request)
-            self.log.info(f"成功为RDS SQL Server实例 {resource['name']} (ID: {instance_id}) 开启TDE功能")
+            self.log.info(f"成功为RDS SQL Server实例 {resource['name']}"
+                          f" (ID: {instance_id}) 开启TDE功能")
             return response
         except Exception as e:
-            self.log.error(f"无法为RDS SQL Server实例 {resource['name']} (ID: {instance_id}) 开启TDE功能: {e}")
+            self.log.error(f"无法为RDS SQL Server实例 {resource['name']}"
+                           f" (ID: {instance_id}) 开启TDE功能: {e}")
             raise

@@ -610,8 +610,6 @@ class RDSTest(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 0, "不应有实例匹配该罕见配置")
 
-
-
     # ===========================
     # Filter Tests (Auto Upgrade Policy)
     # ===========================
@@ -650,8 +648,6 @@ class RDSTest(BaseTest):
         resources = p.run()
         self.assertGreater(len(resources), 0,
                           "测试 VCR 文件应包含至少一个禁用了自动升级策略的 PostgreSQL 实例")
-
-
 
     # ===========================
     # Action Tests (Modify pg_hba.conf)
@@ -741,8 +737,6 @@ class RDSTest(BaseTest):
         self.assertEqual(resources[0]["id"], target_instance_id)
         # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
 
-
-
     # ===========================
     # Action Tests (Enable TDE)
     # ===========================
@@ -812,9 +806,9 @@ class RDSTest(BaseTest):
             session_factory=factory,
         )
         resources = p.run()
-        self.assertGreater(len(resources), 0, 
+        self.assertGreater(len(resources), 0,
                           "测试VCR文件应包含至少一个非最新大版本的PostgreSQL实例")
-        
+
         # 验证每个过滤出的资源都有正确的版本信息和类型
         for resource in resources:
             # 确认是PostgreSQL实例
@@ -841,10 +835,10 @@ class RDSTest(BaseTest):
             },
             session_factory=factory,
         )
-        
+
         # 获取过滤器实例
         filter_instance = p.resource_manager.filters[0]
-        
+
         # 测试版本号提取方法
         self.assertEqual(filter_instance._extract_major_version("12.6.4"), 12)
         self.assertEqual(filter_instance._extract_major_version("10.17.2"), 10)
@@ -1038,14 +1032,14 @@ class ReusableRDSTests(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(resources[0]["id"], target_instance_id)
-        
+
         # 验证资源是PostgreSQL实例并准备了版本信息
         self.assertEqual(resources[0].get('datastore', {}).get('type', '').lower(), 'postgresql')
         self.assertTrue('current_major_version' in resources[0])
         self.assertTrue('latest_major_version' in resources[0])
         self.assertTrue('available_upgrade_versions' in resources[0])
         self.assertTrue(target_version in resources[0]['available_upgrade_versions'])
-        
+
         # 验证操作: 需要手动检查VCR文件确认API调用正确包含了以下内容:
         # 1. 调用了正确的API: POST /v3/{project_id}/instances/{instance_id}/major-versions
         # 2. 请求体包含:
