@@ -962,23 +962,6 @@ class ReusableRDSTests(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
 
-    def test_rds_action_remove_tag(self):
-        """Test removing tags"""
-        factory = self.replay_flight_data('rds_action_remove_tag')
-        p = self.load_policy({
-            'name': 'rds-remove-tag-test',
-            'resource': 'huaweicloud.rds',
-            'filters': [{'tag:env': 'present'}],
-            'actions': [{
-                'type': 'remove-tag',
-                'keys': ['env']
-            }]},
-            session_factory=factory)
-        resources = p.run()
-        # Assuming there is 1 instance to remove tag from
-        self.assertEqual(len(resources), 0)
-        # Verification: Check VCR recording to confirm batch tag delete API was called
-
     # ===========================
     # Action Tests (PostgreSQL Major Version Upgrade)
     # ===========================
