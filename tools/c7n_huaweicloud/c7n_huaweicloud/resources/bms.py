@@ -32,7 +32,7 @@ from c7n.utils import type_schema, local_session
 from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
 from c7n_huaweicloud.provider import resources
 from c7n_huaweicloud.query import QueryResourceManager, TypeInfo
-from c7n.filters import AgeFilter, ValueFilter, Filter, OPERATORS
+from c7n.filters import AgeFilter, ValueFilter, Filter
 from dateutil.parser import parse
 
 log = logging.getLogger("custodian.huaweicloud.resources.bms")
@@ -285,7 +285,7 @@ def deserialize_user_data(user_data):
 @Bms.filter_registry.register("instance-user-data")
 class BmsInstanceUserData(ValueFilter):
     """过滤具有匹配用户数据的裸金属服务器
-    
+
     注意: 建议使用带?sm标志的正则表达式，因为Custodian使用re.match()且用户数据可能跨多行。
 
     :example:
