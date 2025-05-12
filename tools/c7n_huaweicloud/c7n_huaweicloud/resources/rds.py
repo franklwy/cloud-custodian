@@ -1077,29 +1077,26 @@ class PostgresqlHbaConfFilter(Filter):
 
 @RDS.filter_registry.register('postgresql-target-versions')
 class PostgresqlTargetVersionsFilter(Filter):
-    """过滤有可升级目标版本的PostgreSQL RDS实例
+    """过滤非最新大版本的PostgreSQL RDS实例
+
+    该过滤器会检查PostgreSQL实例的当前版本是否为最新的大版本。
+    它通过比较实例当前的大版本号与可用的最大大版本号来确定。
+    例如，如果一个实例运行的是PostgreSQL 12，但最新的大版本是PostgreSQL 14，那么该实例会被筛选出来。
 
     :example:
 
     .. code-block:: yaml
 
         policies:
-          - name: rds-pg-upgradable-versions
+          - name: rds-pg-outdated-major-versions
             resource: huaweicloud.rds
             filters:
               - type: postgresql-target-versions
-                has_target_version: true
     """
-    schema = type_schema(
-        'postgresql-target-versions',
-        has_target_version={'type': 'boolean'},
-        target_version={'type': 'string'}
-    )
+    schema = type_schema('postgresql-target-versions')
 
     def process(self, resources, event=None):
         client = local_session(self.manager.session_factory).client("rds")
-        has_target_version = self.data.get('has_target_version', True)
-        target_version = self.data.get('target_version')
         matched_resources = []
 
         for resource in resources:
@@ -1108,35 +1105,86 @@ class PostgresqlTargetVersionsFilter(Filter):
                 continue
 
             instance_id = resource['id']
+            
+            # 获取实例当前的版本号
+            current_version = resource.get('datastore', {}).get('version', '')
+            if not current_version:
+                self.log.debug(
+                    f"无法获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的当前版本")
+                continue
+                
+            # 提取当前大版本号（只取第一个数字部分）
+            current_major_version = self._extract_major_version(current_version)
+            if current_major_version is None:
+                self.log.debug(
+                    f"无法解析RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的大版本号: {current_version}")
+                continue
+            
             try:
                 # 查询实例可升级的目标版本
                 # API文档: https://support.huaweicloud.com/api-rds/rds_19_0001.html
                 request = ShowAvailableVersionRequest()
                 request.instance_id = instance_id
-                response = client.list_available_version(request)
+                response = client.show_available_version(request)
 
                 available_versions = response.available_versions
-                
-                # 检查是否有可用的升级版本
-                if has_target_version and not available_versions:
+                if not available_versions:
+                    self.log.debug(
+                        f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 没有可用的升级版本")
                     continue
                 
-                if not has_target_version and available_versions:
+                # 提取所有可用版本的大版本号
+                available_major_versions = set()
+                for version in available_versions:
+                    major_version = self._extract_major_version(version)
+                    if major_version is not None:
+                        available_major_versions.add(major_version)
+                
+                if not available_major_versions:
+                    self.log.debug(
+                        f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                        f"没有可解析的大版本号: {available_versions}")
                     continue
+                
+                # 获取最新的大版本号
+                latest_major_version = max(available_major_versions)
+                
+                # 如果当前大版本号小于最新的大版本号，则添加到结果中
+                if current_major_version < latest_major_version:
+                    self.log.info(
+                        f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                        f"的当前版本 {current_version} (大版本: {current_major_version}) "
+                        f"不是最新的大版本 {latest_major_version}")
                     
-                # 如果指定了特定的目标版本，检查是否可升级到该版本
-                if target_version and target_version not in available_versions:
-                    continue
-                
-                # 保存可升级版本信息，以便后续操作使用
-                resource['available_upgrade_versions'] = available_versions
-                matched_resources.append(resource)
+                    # 为资源添加版本信息，便于后续处理
+                    resource['current_major_version'] = current_major_version
+                    resource['latest_major_version'] = latest_major_version
+                    resource['available_upgrade_versions'] = available_versions
+                    matched_resources.append(resource)
                 
             except Exception as e:
                 self.log.error(
                     f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的可升级版本失败: {e}")
                 
         return matched_resources
+    
+    def _extract_major_version(self, version_string):
+        """从版本字符串中提取大版本号（第一个数字部分）
+        
+        例如:
+        - 从 "12.6.4" 提取 12
+        - 从 "10.17.2" 提取 10
+        """
+        if not version_string:
+            return None
+            
+        # 尝试从版本字符串中提取第一个数字部分
+        import re
+        match = re.match(r'^(\d+)', version_string)
+        if match:
+            return int(match.group(1))
+        
+        return None
 
 
 @RDS.filter_registry.register('postgresql-auto-upgrade-policy')
@@ -1262,7 +1310,7 @@ class ModifyPgHbaConfAction(HuaweiCloudBaseAction):
             request.instance_id = instance_id
             request.body = configs
             
-            response = client.modify_pg_hba_conf(request)
+            response = client.modify_postgresql_hba_conf(request)
             self.log.info(f"成功修改RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的pg_hba.conf配置")
             return response
         except Exception as e:
@@ -1311,7 +1359,7 @@ class SetKernelAutoUpgradePolicyAction(HuaweiCloudBaseAction):
             request.instance_id = instance_id
             request.switch_option = switch_option
             
-            response = client.set_db_auto_upgrade_policy(request)
+            response = client.set_auto_upgrade_policy(request)
             self.log.info(
                 f"成功为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                 f"{'启用' if switch_option else '禁用'}内核小版本自动升级策略")
@@ -1336,8 +1384,6 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
             resource: huaweicloud.rds
             filters:
               - type: postgresql-target-versions
-                has_target_version: true
-                target_version: "14.6.1"
             actions:
               - type: upgrade-major-version
                 target_version: "14.6.1"
@@ -1364,13 +1410,44 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
             self.log.warning(f"实例 {resource['name']} (ID: {instance_id}) 不是PostgreSQL实例，跳过大版本升级操作")
             return
         
-        # 检查当前实例是否可以升级到目标版本
+        # 获取可用的升级版本
         available_versions = resource.get('available_upgrade_versions', [])
-        if available_versions and target_version not in available_versions:
+        
+        # 如果没有可用版本信息，则从API获取
+        if not available_versions:
+            try:
+                request = ShowAvailableVersionRequest()
+                request.instance_id = instance_id
+                response = client.show_available_version(request)
+                available_versions = response.available_versions
+                
+                # 如果仍然没有可用的升级版本，则退出
+                if not available_versions:
+                    self.log.error(
+                        f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
+                        f"没有可用的升级版本")
+                    return
+            except Exception as e:
+                self.log.error(
+                    f"获取RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) 的可用升级版本失败: {e}")
+                return
+        
+        # 验证目标版本是否在可用的升级版本列表中
+        if target_version not in available_versions:
             self.log.error(
                 f"RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                 f"无法升级到目标版本 {target_version}，可用的升级版本为: {available_versions}")
             return
+        
+        # 验证目标版本大版本号是否大于当前大版本号
+        current_major_version = resource.get('current_major_version')
+        if current_major_version is not None:
+            # 从目标版本中提取大版本号
+            target_major_version = self._extract_major_version(target_version)
+            if target_major_version is not None and target_major_version <= current_major_version:
+                self.log.warning(
+                    f"目标版本 {target_version} (大版本: {target_major_version}) "
+                    f"不大于当前大版本 {current_major_version}，这可能不是大版本升级")
             
         try:
             # 执行大版本升级
@@ -1390,7 +1467,7 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
                 
             request.body = body
             
-            response = client.start_instance_major_version_upgrade(request)
+            response = client.upgrade_db_major_version(request)
             self.log.info(
                 f"成功开始RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                 f"的大版本升级到 {target_version} 的任务，任务ID: {getattr(response, 'job_id', 'unknown')}")
@@ -1400,6 +1477,24 @@ class UpgradeMajorVersionAction(HuaweiCloudBaseAction):
                 f"无法为RDS PostgreSQL实例 {resource['name']} (ID: {instance_id}) "
                 f"执行大版本升级到 {target_version}: {e}")
             raise
+    
+    def _extract_major_version(self, version_string):
+        """从版本字符串中提取大版本号（第一个数字部分）
+        
+        例如:
+        - 从 "12.6.4" 提取 12
+        - 从 "10.17.2" 提取 10
+        """
+        if not version_string:
+            return None
+            
+        # 尝试从版本字符串中提取第一个数字部分
+        import re
+        match = re.match(r'^(\d+)', version_string)
+        if match:
+            return int(match.group(1))
+        
+        return None
 
 
 @RDS.action_registry.register('enable-tde')

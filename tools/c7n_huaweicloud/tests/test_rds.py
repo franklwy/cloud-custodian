@@ -610,29 +610,6 @@ class RDSTest(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 0, "不应有实例匹配该罕见配置")
 
-    # ===========================
-    # Filter Tests (Target Versions)
-    # ===========================
-    def test_postgresql_target_versions_filter_has_targets(self):
-        """测试 PostgreSQL 可升级目标版本过滤器 - 有可用目标版本"""
-        factory = self.replay_flight_data("rds_postgresql_target_versions_has")
-        p = self.load_policy(
-            {
-                "name": "rds-postgresql-target-versions-has",
-                "resource": "huaweicloud.rds",
-                "filters": [{
-                    "type": "postgresql-target-versions",
-                    "has_target_version": True
-                }],
-            },
-            session_factory=factory,
-        )
-        resources = p.run()
-        self.assertGreater(len(resources), 0, "测试 VCR 文件应包含至少一个有可升级版本的 PostgreSQL 实例")
-        # 确认返回的实例都有可升级版本信息
-        for resource in resources:
-            self.assertTrue('available_upgrade_versions' in resource)
-            self.assertTrue(len(resource['available_upgrade_versions']) > 0)
 
 
     # ===========================
@@ -700,7 +677,7 @@ class RDSTest(BaseTest):
                             "user": "all",
                             "address": "0.0.0.0/0",
                             "mask": "",
-                            "method": "scram-sha-256",
+                            "method": "md5",
                             "priority": 0
                         }
                     ]
@@ -764,39 +741,7 @@ class RDSTest(BaseTest):
         self.assertEqual(resources[0]["id"], target_instance_id)
         # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
 
-    # ===========================
-    # Action Tests (Upgrade Major Version)
-    # ===========================
-    def test_upgrade_major_version_action(self):
-        """测试 PostgreSQL 大版本升级操作"""
-        factory = self.replay_flight_data("rds_action_upgrade_major_version")
-        target_instance_id = "pg-instance-for-upgrade-test"
-        target_version = "14.6.1"  # 假设目标版本
-        p = self.load_policy(
-            {
-                "name": "rds-action-upgrade-major-version",
-                "resource": "huaweicloud.rds",
-                "filters": [
-                    {"type": "value", "key": "id", "value": target_instance_id},
-                    {
-                        "type": "postgresql-target-versions",
-                        "has_target_version": True,
-                        "target_version": target_version
-                    }
-                ],
-                "actions": [{
-                    "type": "upgrade-major-version",
-                    "target_version": target_version,
-                    "is_change_private_ip": True,
-                    "statistics_collection_mode": "before_change_private_ip"
-                }],
-            },
-            session_factory=factory,
-        )
-        resources = p.run()
-        self.assertEqual(len(resources), 1)
-        self.assertEqual(resources[0]["id"], target_instance_id)
-        # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
 
     # ===========================
     # Action Tests (Enable TDE)
@@ -849,6 +794,64 @@ class RDSTest(BaseTest):
         self.assertEqual(len(resources), 1)
         self.assertEqual(resources[0]["id"], target_instance_id)
         # 验证操作: 需要手动检查 VCR 文件确认 API 调用正确
+
+    # ===========================
+    # Filter Tests (PostgreSQL Target Versions)
+    # ===========================
+    def test_postgresql_target_versions_filter(self):
+        """测试PostgreSQL大版本升级过滤器 - 检测非最新大版本的PostgreSQL实例"""
+        factory = self.replay_flight_data("rds_postgresql_target_versions")
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-target-versions",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-target-versions"
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertGreater(len(resources), 0, 
+                          "测试VCR文件应包含至少一个非最新大版本的PostgreSQL实例")
+        
+        # 验证每个过滤出的资源都有正确的版本信息和类型
+        for resource in resources:
+            # 确认是PostgreSQL实例
+            self.assertEqual(resource.get('datastore', {}).get('type', '').lower(), 'postgresql')
+            # 确认有版本信息
+            self.assertTrue('current_major_version' in resource)
+            self.assertTrue('latest_major_version' in resource)
+            # 确认当前版本小于最新版本
+            self.assertLess(resource['current_major_version'], resource['latest_major_version'])
+            # 确认有可用升级版本列表
+            self.assertTrue('available_upgrade_versions' in resource)
+
+    def test_postgresql_target_versions_filter_extract_version(self):
+        """测试PostgreSQL大版本升级过滤器 - 版本号提取功能"""
+        factory = self.replay_flight_data("rds_postgresql_target_versions_extract")
+        # 模拟过滤器实例来测试版本提取方法
+        p = self.load_policy(
+            {
+                "name": "rds-postgresql-target-versions-extract",
+                "resource": "huaweicloud.rds",
+                "filters": [{
+                    "type": "postgresql-target-versions"
+                }],
+            },
+            session_factory=factory,
+        )
+        
+        # 获取过滤器实例
+        filter_instance = p.resource_manager.filters[0]
+        
+        # 测试版本号提取方法
+        self.assertEqual(filter_instance._extract_major_version("12.6.4"), 12)
+        self.assertEqual(filter_instance._extract_major_version("10.17.2"), 10)
+        self.assertEqual(filter_instance._extract_major_version("14"), 14)
+        self.assertIsNone(filter_instance._extract_major_version(""))
+        self.assertIsNone(filter_instance._extract_major_version(None))
+
 
 # =========================
 # Reusable Feature Tests
@@ -1006,3 +1009,46 @@ class ReusableRDSTests(BaseTest):
         # Verification: Check VCR recording to confirm two batch tag API calls First:
         # batch_tag_add_action adding new tag {'key': 'Environment', 'value': 'original env tag
         # value'} Second: batch_tag_del_action deleting old tag {'key': 'env'}
+
+    # ===========================
+    # Action Tests (PostgreSQL Major Version Upgrade)
+    # ===========================
+    def test_upgrade_major_version_action(self):
+        """测试执行PostgreSQL实例大版本升级操作"""
+        factory = self.replay_flight_data("rds_action_upgrade_major_version")
+        target_instance_id = "pg-instance-for-major-upgrade"
+        target_version = "14.6.1"
+        p = self.load_policy(
+            {
+                "name": "rds-action-upgrade-major-version",
+                "resource": "huaweicloud.rds",
+                "filters": [
+                    {"type": "value", "key": "id", "value": target_instance_id},
+                    {"type": "postgresql-target-versions"}  # 确保是可升级大版本的PostgreSQL实例
+                ],
+                "actions": [{
+                    "type": "upgrade-major-version",
+                    "target_version": target_version,
+                    "is_change_private_ip": True,
+                    "statistics_collection_mode": "before_change_private_ip"
+                }],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]["id"], target_instance_id)
+        
+        # 验证资源是PostgreSQL实例并准备了版本信息
+        self.assertEqual(resources[0].get('datastore', {}).get('type', '').lower(), 'postgresql')
+        self.assertTrue('current_major_version' in resources[0])
+        self.assertTrue('latest_major_version' in resources[0])
+        self.assertTrue('available_upgrade_versions' in resources[0])
+        self.assertTrue(target_version in resources[0]['available_upgrade_versions'])
+        
+        # 验证操作: 需要手动检查VCR文件确认API调用正确包含了以下内容:
+        # 1. 调用了正确的API: POST /v3/{project_id}/instances/{instance_id}/major-versions
+        # 2. 请求体包含:
+        #    - "target_version": "14.6.1"
+        #    - "is_change_private_ip": true
+        #    - "statistics_collection_mode": "before_change_private_ip"
