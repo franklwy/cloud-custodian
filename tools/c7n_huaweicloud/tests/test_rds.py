@@ -924,7 +924,6 @@ class ReusableRDSTests(BaseTest):
         # Assuming there is 1 instance marked for deletion
         self.assertEqual(len(resources), 1)
 
-
     # --- 可复用操作测试 ---
 
     def test_rds_action_tag(self):
