@@ -19,7 +19,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T015505Z
     method: GET
-    uri: https://127.0.0.1:10808/v1/ap-southeat-1/baremetalservers/detail?limit=100&offset=0
+    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v1/ap-southeat-1/baremetalservers/detail?limit=100&offset=0
   response:
     body:
       string: '{"servers": [{"id": "bms-test-id1", "user_id": "user-test-id1", 

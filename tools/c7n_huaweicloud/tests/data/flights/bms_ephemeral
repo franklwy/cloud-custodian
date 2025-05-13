@@ -19,7 +19,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T015504Z
     method: GET
-    uri: https://127.0.0.1:10808/v1/ap-southeat-1/baremetalservers/detail?limit=100&offset=0
+    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v1/ap-southeat-1/baremetalservers/detail?limit=100&offset=0
   response:
     body:
       string: '{ "count": 2, "servers": [ { "id": "b544be62-1b3b-4982-ad98-572b002ac23b",
@@ -111,7 +111,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T025717Z
     method: GET
-    uri: https://127.0.0.1:10808/v2.1/ap-southeat-1/flavors/physical.s1.medium/os-extra_specs
+    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v2.1/ap-southeat-1/flavors/physical.s1.medium/os-extra_specs
   response:
     body:
       string: '{ "extra_specs": { "ecs:performancetype": "computingv3", "resource_type":
@@ -165,7 +165,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T030729Z
     method: GET
-    uri: https://127.0.0.1:10808/v2.1/ap-southeat-1/flavors/physical.s1.medium.ondemand/os-extra_specs
+    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v2.1/ap-southeat-1/flavors/physical.s1.medium.ondemand/os-extra_specs
   response:
     body:
       string: '{

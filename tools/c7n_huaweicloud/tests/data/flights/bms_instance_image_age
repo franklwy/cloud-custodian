@@ -19,7 +19,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T015505Z
     method: GET
-    uri: https://127.0.0.1:10808/v1/ap-southeat-1/baremetalservers/detail?limit=100&offset=0
+    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v1/ap-southeat-1/baremetalservers/detail?limit=100&offset=0
   response:
     body:
       string: '{ "count": 1, "servers": [ { "id": "53206ed0-56de-4d6b-b7ee-ffc62ca26f43",
@@ -100,7 +100,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T054614Z
     method: GET
-    uri: https://127.0.0.1:10808/v2/cloudimages?id=8589958c-6bc7-40c6-b81b-3fe4cd2e3d85&limit=1000
+    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v2/cloudimages?id=8589958c-6bc7-40c6-b81b-3fe4cd2e3d85&limit=1000
   response:
     body:
       string: '{
