@@ -99,13 +99,11 @@ from huaweicloudsdkram.v1 import (
     SearchResourceShareAssociationsReqBody,
 )
 from huaweicloudsdkram.v1.region.ram_region import RamRegion
-from huaweicloudsdkdns.v2 import (
-    ListPublicZonesRequest,
-    ListPrivateZonesRequest,
-    ListRecordSetsWithLineRequest,
-    DnsClient
+from huaweicloudsdkbms.v1 import (
+    BmsClient,
+    ListBareMetalServersRequest,
 )
-from huaweicloudsdkdns.v2.region.dns_region import DnsRegion
+from huaweicloudsdkbms.v1.region.bms_region import BmsRegion
 
 
 log = logging.getLogger("custodian.huaweicloud.client")
@@ -171,6 +169,13 @@ class Session:
                 EcsClient.new_builder()
                 .with_credentials(credentials)
                 .with_region(EcsRegion.value_of(self.region))
+                .build()
+            )
+        elif service == "bms":
+            client = (
+                BmsClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(BmsRegion.value_of(self.region))
                 .build()
             )
         elif service == "er":
@@ -401,13 +406,6 @@ class Session:
                 .with_region(KafkaRegion.value_of(self.region))
                 .build()
             )
-        elif service in ['dns-publiczone', 'dns-privatezone', 'dns-recordset']:
-            client = (
-                DnsClient.new_builder()
-                .with_credentials(credentials)
-                .with_region(DnsRegion.value_of(self.region))
-                .build()
-            )
 
         return client
 
@@ -450,6 +448,8 @@ class Session:
             request = ListServersDetailsRequest(
                 not_tags="__type_baremetal"
             )
+        elif service == "bms":
+            request = ListBareMetalServersRequest(limit=1000)
         elif service == "deh":
             request = ListDedicatedHostsRequest()
         elif service == "obs":
@@ -514,11 +514,4 @@ class Session:
             request = ListDDosStatusRequest()
         elif service == 'kafka':
             request = ListInstancesRequest()
-        elif service == 'dns-publiczone':
-            request = ListPublicZonesRequest()
-        elif service == 'dns-privatezone':
-            request = ListPrivateZonesRequest()
-            request.type = "private"
-        elif service == 'dns-recordset':
-            request = ListRecordSetsWithLineRequest()
         return request
