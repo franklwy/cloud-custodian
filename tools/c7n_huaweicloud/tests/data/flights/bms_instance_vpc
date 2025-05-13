@@ -103,7 +103,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T055000Z
     method: GET
-    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v1/ap-southeat-1/vpcs?limit=100
+    uri: https://vpc.ap-southeast-1.myhuaweicloud.com/v1/ap-southeat-1/vpcs?limit=100
   response:
     body:
       string: '{

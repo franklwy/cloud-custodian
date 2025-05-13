@@ -111,7 +111,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T025717Z
     method: GET
-    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v2.1/ap-southeat-1/flavors/physical.s1.medium/os-extra_specs
+    uri: https://ecs.ap-southeast-1.myhuaweicloud.com/v2.1/ap-southeat-1/flavors/physical.s1.medium/os-extra_specs
   response:
     body:
       string: '{ "extra_specs": { "ecs:performancetype": "computingv3", "resource_type":
@@ -165,7 +165,7 @@ interactions:
       X-Sdk-Date:
       - 20250508T030729Z
     method: GET
-    uri: https://bms.ap-southeast-1.myhuaweicloud.com/v2.1/ap-southeat-1/flavors/physical.s1.medium.ondemand/os-extra_specs
+    uri: https://ecs.ap-southeast-1.myhuaweicloud.com/v2.1/ap-southeat-1/flavors/physical.s1.medium.ondemand/os-extra_specs
   response:
     body:
       string: '{

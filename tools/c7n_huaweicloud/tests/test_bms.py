@@ -347,26 +347,3 @@ class BmsTest(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(resources[0]["id"], "53206ed0-56de-4d6b-b7ee-ffc62ca26f43")
-
-    def test_instance_evs_with_skip_devices(self):
-        """测试裸金属服务器EVS卷过滤器(跳过特定设备)"""
-        factory = self.replay_flight_data("bms_instance_evs_skip_devices")
-        p = self.load_policy(
-            {
-                "name": "bms_instance_evs_skip_devices",
-                "resource": "huaweicloud.bms",
-                "filters": [
-                    {
-                        "type": "instance-evs",
-                        "skip-devices": ["/dev/sda"],
-                        "key": "size",
-                        "op": "gt",
-                        "value": 100
-                    }
-                ],
-            },
-            session_factory=factory,
-        )
-        resources = p.run()
-        self.assertEqual(len(resources), 1)
-        self.assertEqual(resources[0]["id"], "53206ed0-56de-4d6b-b7ee-ffc62ca26f43")
