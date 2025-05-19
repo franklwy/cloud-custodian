@@ -112,6 +112,14 @@ from huaweicloudsdkrocketmq.v2 import (
     RocketMQClient, ListInstancesRequest as RocketMQListInstancesRequest
 )
 from huaweicloudsdkrocketmq.v2.region.rocketmq_region import RocketMQRegion
+from huaweicloudsdkapig.v2 import (
+    ApigClient,
+    ListApisV2Request,
+    ListEnvironmentsV2Request,
+    ListApiGroupsV2Request,
+    ListInstancesV2Request,
+)
+from huaweicloudsdkapig.v2.region.apig_region import ApigRegion
 from huaweicloudsdkswr.v2 import SwrClient, ListReposDetailsRequest, ListRepositoryTagsRequest
 from huaweicloudsdkswr.v2.region.swr_region import SwrRegion
 from huaweicloudsdkscm.v3 import ScmClient, ListCertificatesRequest
@@ -446,6 +454,14 @@ class Session:
                 .with_region(RocketMQRegion.value_of(self.region))
                 .build()
             )
+        elif service == 'apig' or service in ['apig-api', 'apig-stage', 'apig-api-groups',
+                                              'apig-instance']:
+            client = (
+                ApigClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(ApigRegion.value_of(self.region))
+                .build()
+            )
         elif service in ['swr', 'swr-image']:
             client = (
                 SwrClient.new_builder()
@@ -608,6 +624,14 @@ class Session:
             request = ListInstancesRequest()
         elif service == 'reliability':
             request = RocketMQListInstancesRequest()
+        elif service == 'apig-api':
+            request = ListApisV2Request()
+        elif service == 'apig-stage':
+            request = ListEnvironmentsV2Request()
+        elif service == 'apig-api-groups':
+            request = ListApiGroupsV2Request()
+        elif service == 'apig-instance':
+            request = ListInstancesV2Request()
         elif service == 'swr':
             request = ListReposDetailsRequest()
         elif service == 'swr-image':
