@@ -18,20 +18,7 @@ log = logging.getLogger("custodian.huaweicloud.resources.eip")
 
 @resources.register("eip")
 class EIP(QueryResourceManager):
-    """HuaweiCloud Elastic IP Resource
-
-    :example:
-
-    .. code-block:: yaml
-
-        policies:
-          - name: eip-unattached
-            resource: huaweicloud.eip
-            filters:
-              - type: value
-                key: status
-                value: DOWN
-    """
+    """HuaweiCloud Elastic IP Resource"""
 
     class resource_type(TypeInfo):
         service = "eip"
