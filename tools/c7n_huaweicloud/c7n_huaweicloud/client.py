@@ -133,9 +133,10 @@ from huaweicloudsdkdc.v3 import DcClient, ListDirectConnectsRequest
 from huaweicloudsdkdc.v3.region.dc_region import DcRegion
 from huaweicloudsdkcc.v3 import CcClient, ListCentralNetworksRequest
 from huaweicloudsdkcc.v3.region.cc_region import CcRegion
+from huaweicloudsdkcdn.v2 import CdnClient, ListDomainsRequest
+from huaweicloudsdkcdn.v2.region.cdn_region import CdnRegion
 from huaweicloudsdkworkspace.v2 import WorkspaceClient, ListDesktopsDetailRequest
 from huaweicloudsdkworkspace.v2.region.workspace_region import WorkspaceRegion
-
 
 log = logging.getLogger("custodian.huaweicloud.client")
 
@@ -500,6 +501,13 @@ class Session:
                 .with_region(CcRegion.CN_NORTH_4)
                 .build()
             )
+        elif service == "cdn":
+            client = (
+                CdnClient.new_builder()
+                .with_credentials(globalCredentials)
+                .with_region(CdnRegion.CN_NORTH_1)
+                .build()
+            )
         elif service == "bms":
             client = (
                 BmsClient.new_builder()
@@ -633,6 +641,8 @@ class Session:
             request = ListDDosStatusRequest()
         elif service == 'kafka':
             request = ListInstancesRequest()
+        elif service == "cdn":
+            request = ListDomainsRequest()
         elif service == 'reliability':
             request = RocketMQListInstancesRequest()
         elif service == 'apig-api':
