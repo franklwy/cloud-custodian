@@ -31,7 +31,7 @@ from huaweicloudsdkfunctiongraph.v2.region.functiongraph_region import (
 )
 from huaweicloudsdktms.v1 import TmsClient
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
-from huaweicloudsdklts.v2 import LtsClient, ListTransfersRequest
+from huaweicloudsdklts.v2 import LtsClient, ListTransfersRequest, ListLogGroupsRequest
 from huaweicloudsdklts.v2.region.lts_region import LtsRegion
 from huaweicloudsdkdeh.v1 import DeHClient, ListDedicatedHostsRequest
 from huaweicloudsdkdeh.v1.region.deh_region import DeHRegion
@@ -189,6 +189,13 @@ class Session:
                 .build()
             )
         elif service == "lts-transfer":
+            client = (
+                LtsClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(LtsRegion.value_of(self.region))
+                .build()
+            )
+        elif service == "lts-logstream":
             client = (
                 LtsClient.new_builder()
                 .with_credentials(credentials)
@@ -451,6 +458,8 @@ class Session:
             request = ListEnterpriseRoutersRequest()
         elif service == "lts-transfer":
             request = ListTransfersRequest()
+        elif service == "lts-logstream":
+            request = ListLogGroupsRequest()
         elif service == "config":
             request = ShowTrackerConfigRequest()
         elif service == "ecs":
