@@ -1,0 +1,273 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Host:
+      - cbr.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250522T103004Z
+    method: GET
+    uri: https://cbr.ap-southeast-1.myhuaweicloud.com/v3/ap-southeat-1/backups?limit=100&offset=0&show_replication=true
+  response:
+    body:
+      string: '{ "count" : 2, "backups" : [ { "provider_id" : "0daac4c5-6707-4851-97ba-169e36266b66",
+        "checkpoint_id" : "1fced58b-2a31-4851-bcbb-96216f83ce99", "updated_at" : "2020-02-21T07:07:25.114+00:00",
+        "vault_id" : "cca85ea5-00a4-418d-9222-bd83985bc515", "id" : "b1c4afd9-e7a6-4888-9010-c2bac3aa7910",
+        "resource_az" : "br-iaas-odin1a", "image_type" : "backup", "resource_id" :
+        "1a503932-ee8f-4dd5-8248-8dfb57e584c5", "resource_size" : 40, "children" :
+        [ ], "extend_info" : { "auto_trigger" : true, "supported_restore_mode" : "backup",
+        "contain_system_disk" : true, "support_lld" : true, "system_disk" : false
+        }, "project_id" : "0605767b5780d5762fc5c0118072a564", "status" : "available",
+        "resource_name" : "test001-02", "description" : "", "expired_at" : "2020-05-21T07:00:54.060+00:00",
+        "name" : "autobk_b629", "created_at" : "2020-02-21T07:00:54.065+00:00", "resource_type"
+        : "OS::Nova::Server" }, { "provider_id" : "d1603440-187d-4516-af25-121250c7cc97",
+        "checkpoint_id" : "f64c351f-769f-4c04-8806-fd90a59e9b12", "updated_at" : "2020-02-21T07:09:37.767+00:00",
+        "vault_id" : "79bd9daa-884f-4f84-b8fe-235d58cd927d", "id" : "5606aab5-2dc2-4498-8144-dc848d099af5",
+        "resource_az" : "br-iaas-odin1a", "image_type" : "backup", "resource_id" :
+        "54f7ccbc-072f-4ec5-a7b7-b24dabdb4539", "resource_size" : 40, "children" :
+        [ ], "extend_info" : { "auto_trigger" : true, "snapshot_id" : "e3def9a8-e4b4-4c12-b132-f4ba8ce9a34f",
+        "bootable" : true, "support_lld" : true, "encrypted" : false, "system_disk"
+        : false }, "project_id" : "0605767b5780d5762fc5c0118072a564", "status" : "available",
+        "resource_name" : "qsy_000", "description" : "", "expired_at" : "2020-03-22T07:00:34.878+00:00",
+        "name" : "autobk_6809", "created_at" : "2020-02-21T07:00:34.882+00:00", "resource_type"
+        : "OS::Cinder::Volume" } ] }'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 22 May 2025 10:30:04 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=dcd9a73278af694108; path=/
+      - HWWAFSESTIME=1747909804835; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - 3600c08c07c5639ad7273d84225ce2f4
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 200
+      message: success
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Host:
+      - ecs.ap-southeast-1.myhuaweicloud.com
+      User-Agent:
+      - huaweicloud-usdk-python/3.0
+      X-Project-Id:
+      - ap-southeat-1
+      X-Sdk-Date:
+      - 20250522T103756Z
+    method: GET
+    uri: https://ecs.ap-southeast-1.myhuaweicloud.com/v1/ap-southeat-1/cloudservers/detail
+  response:
+    body:
+      string: '{
+    "count": 5,
+    "servers": [
+        {
+            "id": "9f819649-1f7c-44ea-a315-7aa6706de50b",
+            "name": "ecs-test01",
+            "addresses": {
+                "0dae26c9-9a70-4392-93f3-87d53115d171": [
+                    {
+                        "version": "4",
+                        "addr": "192.168.0.116"
+                    }
+                ]
+            },
+            "flavor": {
+                "disk": "0",
+                "vcpus": "4",
+                "ram": "4096",
+                "id": "c1.xlarge",
+                "name": "c1.xlarge",
+                "gpus": [
+
+                ],
+                "asic_accelerators": [
+
+                ]
+            },
+            "accessIPv4": "",
+            "accessIPv6": "",
+            "status": "ACTIVE",
+            "progress": 0,
+            "hostId": "309fc3c650ff6a1c9b20b975315f531814c3a512d8f3f5ffabb076fc",
+            "updated": "2018-06-19T07:49:49Z",
+            "created": "2018-06-19T07:44:24Z",
+            "metadata": {
+                "metering.image_id": "af60e0d5-6952-4f3d-b0ed-31bb19d4a692",
+                "metering.imagetype": "gold",
+                "metering.resourcespeccode": "c1.xlarge.linux",
+                "image_name": "HEC_Public_Cloudinit_CentOS_7.4_64bit",
+                "os_bit": "64",
+                "vpc_id": "0dae26c9-9a70-4392-93f3-87d53115d171",
+                "os_type": "Linux",
+                "charging_mode": "0"
+            },
+            "tags": [
+
+            ],
+            "description": "ecs-test01",
+            "locked": false,
+            "config_drive": "",
+            "tenant_id": "13c67a214ced4afb88d911ae4bd56666",
+            "user_id": "71dff1b123b54093a00af1cb98c76666",
+            "key_name": "KeyPair-3e89",
+            "OS-EXT-STS:power_state": 1,
+            "OS-EXT-STS:vm_state": "active",
+            "OS-EXT-SRV-ATTR:host": "az1.dc1",
+            "OS-EXT-SRV-ATTR:instance_name": "instance-000ffcfa",
+            "OS-EXT-SRV-ATTR:hypervisor_hostname": "nova001@248",
+            "OS-DCF:diskConfig": "MANUAL",
+            "OS-EXT-AZ:availability_zone": "az1.dc1",
+            "os:scheduler_hints": {
+
+            },
+            "OS-EXT-SRV-ATTR:root_device_name": "/dev/sda",
+            "OS-EXT-SRV-ATTR:ramdisk_id": "",
+            "enterprise_project_id": "0",
+            "OS-SRV-USG:launched_at": "2018-06-19T07:47:17.173337",
+            "OS-EXT-SRV-ATTR:kernel_id": "",
+            "OS-EXT-SRV-ATTR:launch_index": 0,
+            "host_status": "UP",
+            "OS-EXT-SRV-ATTR:reservation_id": "r-luu05mkl",
+            "OS-EXT-SRV-ATTR:hostname": "ecs-test"
+        },
+        {
+            "id": "c93a6639-5ca5-484f-9d1e-3c9a645c8286",
+            "name": "ecs-5471",
+            "addresses": {
+                "0dae26c9-9a70-4392-93f3-87d53115d171": [
+                    {
+                        "version": "4",
+                        "addr": "192.168.0.243"
+                    }
+                ]
+            },
+            "flavor": {
+                "disk": "0",
+                "vcpus": "1",
+                "ram": "1024",
+                "id": "s2.small.1",
+                "name": "s2.small.1",
+                "gpus": [
+
+                ],
+                "asic_accelerators": [
+
+                ]
+            },
+            "accessIPv4": "",
+            "accessIPv6": "",
+            "status": "ACTIVE",
+            "progress": 0,
+            "hostId": "309fc3c650ff6a1c9b20b975315f531814c3a512d8f3f5ffabb076fc",
+            "updated": "2018-06-15T08:59:37Z",
+            "created": "2018-06-15T08:56:24Z",
+            "metadata": {
+                "metering.order_id": "CS1806151652ACIDD",
+                "metering.image_id": "af60e0d5-6952-4f3d-b0ed-31bb19d4a692",
+                "metering.imagetype": "gold",
+                "metering.resourcespeccode": "s2.small.1.linux",
+                "image_name": "HEC_Public_Cloudinit_CentOS_7.4_64bit",
+                "metering.product_id": "00301-184015-0--0",
+                "os_bit": "64",
+                "vpc_id": "0dae26c9-9a70-4392-93f3-87d53115d171",
+                "os_type": "Linux",
+                "charging_mode": "1"
+            },
+            "tags": [
+
+            ],
+            "description": "ecs-5471",
+            "locked": false,
+            "config_drive": "",
+            "tenant_id": "13c67a214ced4afb88d911ae4bd56666",
+            "user_id": "7ab967cfe70d4bada0b5d4aaadc46666",
+            "key_name": "KeyPair-3e89",
+            "OS-EXT-STS:power_state": 1,
+            "OS-EXT-STS:vm_state": "active",
+            "OS-EXT-SRV-ATTR:host": "az1.dc1",
+            "OS-EXT-SRV-ATTR:instance_name": "instance-000ff19f",
+            "OS-EXT-SRV-ATTR:hypervisor_hostname": "nova001@248",
+            "OS-DCF:diskConfig": "MANUAL",
+            "OS-EXT-AZ:availability_zone": "az1.dc1",
+            "os:scheduler_hints": {
+
+            },
+            "OS-EXT-SRV-ATTR:root_device_name": "/dev/vda",
+            "OS-EXT-SRV-ATTR:ramdisk_id": "",
+            "enterprise_project_id": "0",
+            "OS-SRV-USG:launched_at": "2018-06-15T08:56:59.017321",
+            "OS-EXT-SRV-ATTR:kernel_id": "",
+            "OS-EXT-SRV-ATTR:launch_index": 0,
+            "host_status": "UP",
+            "OS-EXT-SRV-ATTR:reservation_id": "r-3my5zkz1",
+            "OS-EXT-SRV-ATTR:hostname": "ecs-5471",
+            "auto_terminate_time": "2021-01-12T23:34:02Z"
+        }
+    ]
+}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 22 May 2025 10:37:56 GMT
+      Server:
+      - CloudWAF
+      Set-Cookie:
+      - HWWAFSESID=7cf7d7cfab0e1f2d6d; path=/
+      - HWWAFSESTIME=1747910273805; path=/
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains;
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Request-Id:
+      - a54e520e33432303cf66a9f140e40639
+      X-XSS-Protection:
+      - 1; mode=block;
+    status:
+      code: 200
+      message: success
+version: 1
