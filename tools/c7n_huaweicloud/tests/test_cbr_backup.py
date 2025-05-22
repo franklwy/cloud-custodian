@@ -9,10 +9,10 @@ class CbrBackupTest(BaseTest):
         factory = self.replay_flight_data('cbr_backup_list')
         p = self.load_policy(
             {
-             'name': 'list_backups',
-             'resource': 'huaweicloud.cbr-backup',
-        },
-        session_factory=factory)
+                'name': 'list_backups',
+                'resource': 'huaweicloud.cbr-backup',
+            },
+            session_factory=factory)
         resources = p.run()
         self.assertEqual(len(resources), 3)
         self.assertEqual(resources[0]['id'], '924c9b1f-9056-4a13-8ac2-19c02f27b699')
@@ -23,18 +23,18 @@ class CbrBackupTest(BaseTest):
         factory = self.replay_flight_data('cbr_backup_unencrypted')
         p = self.load_policy(
             {
-             'name': 'cbr_backup_unencrypted',
-             'resource': 'huaweicloud.cbr-backup',
-             'filters': [{'and':
-                 [{'type': 'value',
-                  'key': 'extend_info.encrypted',
-                  'value': False},
-                 {'type': 'value',
-                  'key': 'resource_type',
-                  'value': 'OS::Cinder::Volume'},
-             ]}],
-        },
-        session_factory=factory)
+                'name': 'cbr_backup_unencrypted',
+                'resource': 'huaweicloud.cbr-backup',
+                'filters': [{'and':
+                                 [{'type': 'value',
+                                   'key': 'extend_info.encrypted',
+                                   'value': False},
+                                  {'type': 'value',
+                                   'key': 'resource_type',
+                                   'value': 'OS::Cinder::Volume'},
+                                  ]}],
+            },
+            session_factory=factory)
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(resources[0]['id'], 'f2aab24a-b8a0-4577-a5d1-6df33f5c7e69')
@@ -51,3 +51,29 @@ class CbrBackupTest(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(resources[0]['id'], 'f2aab24a-b8a0-4577-a5d1-6df33f5c7e69')
+
+    def test_backup_ecs_action(self):
+        factory = self.replay_flight_data('cbr_backup_ecs')
+        p = self.load_policy(
+            {
+                'name': 'cbr_backup_ecs',
+                'resource': 'huaweicloud.cbr-backup',
+                'actions': [{
+                    'type': 'backup-ecs',
+                    'no_backup': ['false'],
+                    'need_backup': ['daily']
+                }],
+            },
+            session_factory=factory)
+        resources = p.run()
+
+        # 验证资源数量
+        self.assertEqual(len(resources), 2)
+
+        # 获取执行结果 (结果直接从操作返回，不是附加在资源上)
+        action = p.resource_manager.actions[0]
+        results = action.process(resources)
+
+        # 验证结果不为空
+        self.assertIsNotNone(results)
+        self.assertTrue(len(results) > 0)
