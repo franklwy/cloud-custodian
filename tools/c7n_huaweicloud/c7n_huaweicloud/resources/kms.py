@@ -6,7 +6,8 @@ import uuid
 
 from huaweicloudsdkkms.v2 import (EnableKeyRotationRequest, OperateKeyRequestBody,
                                   DisableKeyRotationRequest, EnableKeyRequest,
-                                  DisableKeyRequest)
+                                  DisableKeyRequest, CreateKeyRequest, CreateKeyRequestBody,
+                                  ListKeysRequest, ListKeysRequestBody)
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema
 from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
@@ -23,6 +24,7 @@ class Kms(QueryResourceManager):
         enum_spec = ("list_keys", 'key_details', 'offset')
         id = 'key_id'
         tag_resource_type = 'kms'
+        config_resource_support = True
 
 
 @Kms.action_registry.register("enable_key_rotation")
@@ -183,6 +185,54 @@ class disableKey(HuaweiCloudBaseAction):
             raise e
 
         return response
+
+
+@Kms.action_registry.register("create-key")
+class createKey(HuaweiCloudBaseAction):
+    """rotation kms key.
+
+    :Example:
+
+    .. code-block:: yaml
+
+policies:
+  - name: create-key
+    resource: huaweicloud.kms
+    actions:
+      - type: create-key
+        key_aliases: ["bbb"]
+      - type: create-key
+        obs_url: ""
+    """
+
+    schema = type_schema("create-key",
+                         key_aliases={"type": "array"},
+                         obs_url={"type": "string"})
+
+    def process(self, resource):
+        client = self.manager.get_client()
+        key_aliases = self.data.get("key_aliases", [])
+        request = ListKeysRequest()
+        request.body = ListKeysRequestBody(
+            key_spec="ALL",
+            limit="1000")
+        listKeyResponse = client.list_keys(request)
+        arr = {"default"}
+        for data in listKeyResponse.key_details:
+            arr.add(data.key_alias)
+        for alias in key_aliases:
+            if alias not in arr:
+                request = CreateKeyRequest()
+                request.body = CreateKeyRequestBody(
+                    key_alias=alias
+                )
+                try:
+                    print(client.create_key(request))
+                except Exception as e:
+                    raise e
+
+    def perform_action(self, resource):
+        return super().perform_action(resource)
 
 
 @Kms.filter_registry.register("all_keys_disable")
