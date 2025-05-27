@@ -10,7 +10,7 @@ class SecmasterTest(BaseTest):
     # =========================
     # Resource Query Tests
     # =========================
-    
+
     def test_secmaster_instance_query(self):
         """Test SecMaster instance query - TODO: API not supported yet"""
         # TODO: Due to the API for querying security account's professional
@@ -36,7 +36,7 @@ class SecmasterTest(BaseTest):
         self.assertEqual(workspace1['description'], '生产环境工作空间')
         self.assertFalse(workspace1['is_view'])
         self.assertEqual(workspace1['region_id'], 'cn-north-4')
-        # Verify second workspace details - test-workspace  
+        # Verify second workspace details - test-workspace
         workspace2 = resources[1]
         self.assertEqual(workspace2['name'], 'test-workspace')
         self.assertEqual(workspace2['id'], 'workspace002')
@@ -48,7 +48,7 @@ class SecmasterTest(BaseTest):
         """Test SecMaster alert query"""
         factory = self.replay_flight_data('secmaster_alert_query')
         p = self.load_policy({
-            'name': 'secmaster-alert-query-test', 
+            'name': 'secmaster-alert-query-test',
             'resource': 'huaweicloud.secmaster-alert'
         }, session_factory=factory)
         resources = p.run()
@@ -110,7 +110,7 @@ class SecmasterTest(BaseTest):
         self.assertEqual(playbook1['workspace_name'], 'production-workspace')
         self.assertEqual(playbook1['version'], 'v1.0')
         self.assertEqual(playbook1['dataclass_name'], 'security')
-        # Verify second playbook - malicious traffic monitoring playbook  
+        # Verify second playbook - malicious traffic monitoring playbook
         playbook2 = resources[1]
         self.assertEqual(playbook2['id'], 'playbook-002')
         self.assertEqual(playbook2['name'], '恶意流量监控剧本')
@@ -154,7 +154,7 @@ class SecmasterTest(BaseTest):
         # alert-old-003 (~99 days) and alert-very-old-004 (~175 days) are older than 90 days
         # alert-new-001 (~60 days) and alert-recent-002 (~66 days) are newer
         # than 90 days (filtered out)
-        self.assertEqual(len(resources), 2, 
+        self.assertEqual(len(resources), 2,
                         "Should have 2 alerts older than 90 days according to VCR file")
         # Verify first older alert - alert-old-003
         alert1 = resources[0]
@@ -163,7 +163,7 @@ class SecmasterTest(BaseTest):
         self.assertEqual(data_object1['title'], '较旧告警')
         self.assertEqual(data_object1['create_time'], '2025-02-15T10:00:00Z+0800')
         # Verify second older alert - alert-very-old-004
-        alert2 = resources[1]  
+        alert2 = resources[1]
         self.assertEqual(alert2['id'], 'alert-very-old-004')
         data_object2 = alert2['data_object']
         self.assertEqual(data_object2['title'], '很旧的告警')
@@ -188,7 +188,7 @@ class SecmasterTest(BaseTest):
         # alert-very-old-004 (~175 days) is older than 170 days
         # alert-old-003 (~99 days), alert-recent-002 (~66 days), alert-new-001 (~60 days)
         # are newer than 170 days (filtered out)
-        self.assertEqual(len(resources), 1, 
+        self.assertEqual(len(resources), 1,
                         "Should have 1 alert older than 170 days according to VCR file")
         # Verify the very old alert - alert-very-old-004
         alert = resources[0]
@@ -212,7 +212,7 @@ class SecmasterTest(BaseTest):
             ]
         }, session_factory=factory)
         resources = p.run()
-        # Verify VCR file: 3 out of 5 playbooks are enabled (playbook-002, 003, 005)
+        # Verify VCR file: 3 out of 5 playbooks are enabled playbook-002,003,005
         self.assertEqual(len(resources), 3, "Should have 3 enabled playbooks according to VCR file")
         # Verify all returned playbooks are in enabled state
         expected_enabled_ids = ["playbook-002", "playbook-003", "playbook-005"]
@@ -237,7 +237,7 @@ class SecmasterTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # Verify VCR file: 2 out of 5 playbooks are disabled (playbook-001, 004)
-        self.assertEqual(len(resources), 2, 
+        self.assertEqual(len(resources), 2,
                         "Should have 2 disabled playbooks according to VCR file")
         # Verify all returned playbooks are in disabled state
         expected_disabled_ids = ["playbook-001", "playbook-004"]
@@ -263,24 +263,24 @@ class SecmasterTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # Verify VCR file: should return 4 playbooks containing "监控" in name
-        self.assertEqual(len(resources), 4, 
+        self.assertEqual(len(resources), 4,
                         "Should return 4 playbooks containing '监控' according to VCR file")
         # Verify each playbook name contains "监控"
         expected_names = [
             "高危操作监控剧本",
-            "恶意流量监控剧本", 
+            "恶意流量监控剧本",
             "日常监控剧本",
             "权限监控剧本"
         ]
         for i, playbook in enumerate(resources):
-            self.assertEqual(playbook['name'], expected_names[i], 
+            self.assertEqual(playbook['name'], expected_names[i],
                             f"Playbook {i+1} name should be {expected_names[i]}")
             self.assertIn('监控', playbook['name'], "Playbook name should contain '监控'")
             self.assertIn('id', playbook)
             self.assertEqual(playbook['workspace_id'], 'workspace001')
 
     def test_secmaster_workspace_is_view_filter(self):
-        """Test SecMaster workspace is_view filter - filter real workspaces (non-view)"""
+        """Test SecMaster workspace is_view filter-filter real workspaces (non-view)"""
         factory = self.replay_flight_data('secmaster_workspace_is_view_filter')
         p = self.load_policy({
             'name': 'secmaster-workspace-is-view-test',
@@ -298,7 +298,7 @@ class SecmasterTest(BaseTest):
         self.assertIsInstance(resources, list, "Should return list type")
         # According to VCR file: total of 3 workspaces, after filtering
         # should have 2 (is_view=false)
-        self.assertEqual(len(resources), 2, 
+        self.assertEqual(len(resources), 2,
                         "Should have 2 non-view workspaces according to VCR file")
         # Verify first workspace - production-workspace
         workspace1 = resources[0]
@@ -307,14 +307,15 @@ class SecmasterTest(BaseTest):
         self.assertEqual(workspace1['creator_name'], 'admin')
         self.assertFalse(workspace1['is_view'])
         # Verify second workspace - test-workspace
-        workspace2 = resources[1]  
+        workspace2 = resources[1]
         self.assertEqual(workspace2['name'], 'test-workspace')
         self.assertEqual(workspace2['id'], 'workspace002')
         self.assertEqual(workspace2['creator_name'], 'security_admin')
         self.assertFalse(workspace2['is_view'])
         # Ensure no view workspaces are included
         workspace_names = [ws['name'] for ws in resources]
-        self.assertNotIn('workspace-view', workspace_names, "Should not include view workspaces")
+        self.assertNotIn('workspace-view', workspace_names,
+                         "Should not include view workspaces")
 
     # =========================
     # Action Tests
@@ -336,7 +337,7 @@ class SecmasterTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # Verify VCR file: should return 2 workspaces, send message action executed for each
-        self.assertEqual(len(resources), 2, 
+        self.assertEqual(len(resources), 2,
                         "Should have 2 workspaces executing action according to VCR file")
         # Verify first workspace
         workspace1 = resources[0]
@@ -369,7 +370,7 @@ class SecmasterTest(BaseTest):
         # Although send_when_empty=True is set, action does not create virtual resources,
         # but handles empty list notification logic in process
         # Still returns empty list eventually
-        self.assertEqual(len(resources), 0, 
+        self.assertEqual(len(resources), 0,
                         "Even with send_when_empty=True, should return empty list, "
                         "notification logic handled inside action")
 
@@ -397,21 +398,21 @@ class SecmasterTest(BaseTest):
         resources = p.run()
         # VCR file contains only alert-new-001 with High severity
         # Filter for High severity alerts to avoid time-dependent age filters
-        self.assertEqual(len(resources), 1, 
+        self.assertEqual(len(resources), 1,
                         "Should return 1 high severity alert according to VCR file")
         # Verify alert details
         alert = resources[0]
         # Top-level fields
         self.assertEqual(alert['id'], 'alert-new-001', "Alert ID should be alert-new-001")
         self.assertEqual(alert['workspace_id'], 'workspace001', "Should have workspace ID")
-        self.assertEqual(alert['workspace_name'], 'production-workspace', 
+        self.assertEqual(alert['workspace_name'], 'production-workspace',
                         "Should have workspace name")
         # Fields in data_object
         data_object = alert['data_object']
         self.assertEqual(data_object['title'], '最新高危告警', "Alert title should be '最新高危告警'")
         self.assertEqual(data_object['severity'], 'High', "Alert severity should be High")
         self.assertEqual(data_object['handle_status'], 'Open', "Handle status should be Open")
-        self.assertEqual(data_object['create_time'], '2025-03-26T08:30:15Z+0800', 
+        self.assertEqual(data_object['create_time'], '2025-03-26T08:30:15Z+0800',
                         "Create time should match")
 
     def test_secmaster_playbook_enable_action(self):
@@ -435,20 +436,20 @@ class SecmasterTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # According to VCR file: returns 2 disabled playbooks (playbook-001, playbook-004)
-        self.assertEqual(len(resources), 2, 
+        self.assertEqual(len(resources), 2,
                         "Should return 2 disabled playbooks according to VCR file")
         # Verify first playbook - playbook-001
         playbook1 = resources[0]
-        self.assertEqual(playbook1['id'], 'playbook-001', 
+        self.assertEqual(playbook1['id'], 'playbook-001',
                         "First playbook ID should be playbook-001")
         self.assertEqual(playbook1['name'], '高危操作监控剧本', "First playbook name should match")
         self.assertFalse(playbook1['enabled'], "Filter condition: should be disabled state")
         self.assertEqual(playbook1['workspace_id'], 'workspace001', "Should have workspace ID")
-        self.assertEqual(playbook1['workspace_name'], 'production-workspace', 
+        self.assertEqual(playbook1['workspace_name'], 'production-workspace',
                         "Should have workspace name")
         # Verify second playbook - playbook-004
         playbook2 = resources[1]
-        self.assertEqual(playbook2['id'], 'playbook-004', 
+        self.assertEqual(playbook2['id'], 'playbook-004',
                         "Second playbook ID should be playbook-004")
         self.assertEqual(playbook2['name'], '权限监控剧本', "Second playbook name should match")
         self.assertFalse(playbook2['enabled'], "Filter condition: should be disabled state")
@@ -460,7 +461,7 @@ class SecmasterTest(BaseTest):
         # 2. Query version list for playbook-004, find latest version version-004-v2
         #    (update_time: 2024-07-02T16:20:00Z+0800)
         # 3. Update playbooks using correct name and active_version_id
-        # 
+        #
         # VCR file version query responses verify the following logic:
         # - playbook-001 has 3 versions, latest is v3.0 (based on update_time)
         # - playbook-004 has 2 versions, latest is v2.0 (based on update_time)
@@ -485,16 +486,16 @@ class SecmasterTest(BaseTest):
         self.assertEqual(len(resources), 2, "Should return 2 playbooks according to VCR file")
         # Verify first playbook
         playbook1 = resources[0]
-        self.assertEqual(playbook1['id'], 'playbook-001', 
+        self.assertEqual(playbook1['id'], 'playbook-001',
                         "First playbook ID should be playbook-001")
         self.assertEqual(playbook1['name'], '高危操作监控剧本', "First playbook name should match")
         self.assertFalse(playbook1['enabled'], "First playbook should be disabled")
         self.assertEqual(playbook1['workspace_id'], 'workspace001', "Should have workspace ID")
-        self.assertEqual(playbook1['workspace_name'], 'production-workspace', 
+        self.assertEqual(playbook1['workspace_name'], 'production-workspace',
                         "Should have workspace name")
         # Verify second playbook
         playbook2 = resources[1]
-        self.assertEqual(playbook2['id'], 'playbook-002', 
+        self.assertEqual(playbook2['id'], 'playbook-002',
                         "Second playbook ID should be playbook-002")
         self.assertEqual(playbook2['name'], '恶意流量监控剧本', "Second playbook name should match")
         self.assertTrue(playbook2['enabled'], "Second playbook should be enabled")
@@ -532,7 +533,7 @@ class SecmasterTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # According to VCR file: returns 1 matching playbook (name contains "高危操作" and disabled)
-        self.assertEqual(len(resources), 1, 
+        self.assertEqual(len(resources), 1,
                         "Should return 1 matching playbook according to VCR file")
         # Verify playbook content
         playbook = resources[0]
@@ -540,7 +541,7 @@ class SecmasterTest(BaseTest):
         self.assertEqual(playbook['name'], '高危操作监控剧本', "Playbook name should contain '高危操作'")
         self.assertFalse(playbook['enabled'], "Filter condition: should be disabled state")
         self.assertEqual(playbook['workspace_id'], 'workspace001', "Should have workspace ID")
-        self.assertEqual(playbook['workspace_name'], 'production-workspace', 
+        self.assertEqual(playbook['workspace_name'], 'production-workspace',
                         "Should have workspace name")
 
     # =========================
@@ -571,32 +572,32 @@ class SecmasterTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # According to VCR file: returns 2 workspaces starting with 'production'
-        self.assertEqual(len(resources), 2, 
+        self.assertEqual(len(resources), 2,
                         "Should return 2 production workspaces according to VCR file")
         # Verify first workspace - production-main
         workspace1 = resources[0]
-        self.assertEqual(workspace1['name'], 'production-main', 
+        self.assertEqual(workspace1['name'], 'production-main',
                         "First workspace name should be production-main")
         self.assertEqual(workspace1['id'], '39*************bf', "First workspace ID should match")
-        self.assertEqual(workspace1['creator_name'], 'admin', 
+        self.assertEqual(workspace1['creator_name'], 'admin',
                         "First workspace creator should be admin")
-        self.assertEqual(workspace1['description'], '生产环境主工作空间', 
+        self.assertEqual(workspace1['description'], '生产环境主工作空间',
                         "First workspace description should match")
         self.assertFalse(workspace1['is_view'], "First workspace should not be a view")
         # Verify second workspace - production-backup
         workspace2 = resources[1]
-        self.assertEqual(workspace2['name'], 'production-backup', 
+        self.assertEqual(workspace2['name'], 'production-backup',
                          "Second workspace name should be production-backup")
-        self.assertEqual(workspace2['id'], '28*************ae', 
+        self.assertEqual(workspace2['id'], '28*************ae',
                          "Second workspace ID should match")
-        self.assertEqual(workspace2['creator_name'], 'security_admin', 
+        self.assertEqual(workspace2['creator_name'], 'security_admin',
                          "Second workspace creator should be security_admin")
-        self.assertEqual(workspace2['description'], '生产环境备用工作空间', 
+        self.assertEqual(workspace2['description'], '生产环境备用工作空间',
                          "Second workspace description should match")
         self.assertFalse(workspace2['is_view'], "Second workspace should not be a view")
         # Verify all workspace names start with 'production'
         for workspace in resources:
-            self.assertTrue(workspace['name'].startswith('production'), 
+            self.assertTrue(workspace['name'].startswith('production'),
                           f"Workspace {workspace['name']} should start with 'production'")
 
 
@@ -623,7 +624,7 @@ class SecmasterErrorHandlingTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # Verify VCR file: should return empty alert list when no workspace exists
-        self.assertEqual(len(resources), 0, 
+        self.assertEqual(len(resources), 0,
                          "Should return empty alert list when no workspace exists")
 
     def test_secmaster_playbook_no_workspace(self):
@@ -635,5 +636,5 @@ class SecmasterErrorHandlingTest(BaseTest):
         }, session_factory=factory)
         resources = p.run()
         # Verify VCR file: should return empty playbook list when no workspace exists
-        self.assertEqual(len(resources), 0, 
+        self.assertEqual(len(resources), 0,
                          "Should return empty playbook list when no workspace exists")
