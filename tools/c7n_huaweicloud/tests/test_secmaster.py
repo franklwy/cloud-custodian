@@ -274,7 +274,7 @@ class SecmasterTest(BaseTest):
         ]
         for i, playbook in enumerate(resources):
             self.assertEqual(playbook['name'], expected_names[i],
-                            f"Playbook {i+1} name should be {expected_names[i]}")
+                            f"Playbook {i + 1} name should be {expected_names[i]}")
             self.assertIn('监控', playbook['name'], "Playbook name should contain '监控'")
             self.assertIn('id', playbook)
             self.assertEqual(playbook['workspace_id'], 'workspace001')
@@ -409,7 +409,8 @@ class SecmasterTest(BaseTest):
                         "Should have workspace name")
         # Fields in data_object
         data_object = alert['data_object']
-        self.assertEqual(data_object['title'], '最新高危告警', "Alert title should be '最新高危告警'")
+        self.assertEqual(data_object['title'], '最新高危告警', 
+                         "Alert title should be '最新高危告警'")
         self.assertEqual(data_object['severity'], 'High', "Alert severity should be High")
         self.assertEqual(data_object['handle_status'], 'Open', "Handle status should be Open")
         self.assertEqual(data_object['create_time'], '2025-03-26T08:30:15Z+0800',
@@ -538,7 +539,8 @@ class SecmasterTest(BaseTest):
         # Verify playbook content
         playbook = resources[0]
         self.assertEqual(playbook['id'], 'playbook-001', "Playbook ID should be playbook-001")
-        self.assertEqual(playbook['name'], '高危操作监控剧本', "Playbook name should contain '高危操作'")
+        self.assertEqual(playbook['name'], '高危操作监控剧本', 
+                         "Playbook name should contain '高危操作'")
         self.assertFalse(playbook['enabled'], "Filter condition: should be disabled state")
         self.assertEqual(playbook['workspace_id'], 'workspace001', "Should have workspace ID")
         self.assertEqual(playbook['workspace_name'], 'production-workspace',
