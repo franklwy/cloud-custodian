@@ -33,7 +33,7 @@ from huaweicloudsdkfunctiongraph.v2.region.functiongraph_region import (
 )
 from huaweicloudsdktms.v1 import TmsClient
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
-from huaweicloudsdklts.v2 import LtsClient, ListTransfersRequest
+from huaweicloudsdklts.v2 import LtsClient, ListTransfersRequest, ListLogGroupsRequest
 from huaweicloudsdklts.v2.region.lts_region import LtsRegion
 from huaweicloudsdkdeh.v1 import DeHClient, ListDedicatedHostsRequest
 from huaweicloudsdkdeh.v1.region.deh_region import DeHRegion
@@ -80,7 +80,7 @@ from huaweicloudsdkcts.v3 import (
     ListNotificationsRequest,
 )
 from huaweicloudsdkcts.v3.region.cts_region import CtsRegion
-from huaweicloudsdkcbr.v1 import ListBackupsRequest, ListVaultRequest
+from huaweicloudsdkcbr.v1 import ListBackupsRequest, ListVaultRequest, ListProtectableRequest
 from huaweicloudsdksfsturbo.v1 import SFSTurboClient, ListSharesRequest
 from huaweicloudsdksfsturbo.v1.region.sfsturbo_region import SFSTurboRegion
 from huaweicloudsdkcoc.v1 import CocClient, ListInstanceCompliantRequest
@@ -225,7 +225,7 @@ class Session:
                 .with_region(EvsRegion.value_of(self.region))
                 .build()
             )
-        elif service == "lts-transfer":
+        elif service in ["lts-transfer", "lts-stream"]:
             client = (
                 LtsClient.new_builder()
                 .with_credentials(credentials)
@@ -354,7 +354,7 @@ class Session:
                 .build()
             )
         elif (
-                service == "cbr-backup" or service == "cbr-vault" or service == "cbr-policy"
+                service == "cbr-backup" or service == "cbr-vault" or service == "cbr-protectable"
         ):
             client = (
                 CbrClient.new_builder()
@@ -575,6 +575,8 @@ class Session:
             request = ListCentralNetworksRequest()
         elif service == "lts-transfer":
             request = ListTransfersRequest()
+        elif service == "lts-stream":
+            request = ListLogGroupsRequest()
         elif service == "config":
             request = ShowTrackerConfigRequest()
         elif service == "ecs":
@@ -637,6 +639,9 @@ class Session:
             request.show_replication = True
         elif service == "cbr-vault":
             request = ListVaultRequest()
+        elif service == "cbr-protectable":
+            request = ListProtectableRequest()
+            request.protectable_type = "server"
         elif service == "sfsturbo":
             request = ListSharesRequest()
         elif service == "coc":
@@ -651,7 +656,7 @@ class Session:
         elif service == 'kafka':
             request = ListInstancesRequest()
         elif service == "cdn":
-            request = ListDomainsRequest()
+            request = ListDomainsRequest(show_tags=True)
         elif service == 'reliability':
             request = RocketMQListInstancesRequest()
         elif service == 'apig-api':

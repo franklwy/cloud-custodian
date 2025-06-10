@@ -49,7 +49,7 @@ class TagCountFilter(Filter):
 
     def get_tags_from_resource(self, resource):
         try:
-            tags = resource["tags"]
+            tags = resource.get('tags')
             if isinstance(tags, dict):
                 return tags
             elif isinstance(tags, list):
@@ -102,7 +102,7 @@ class TagActionFilter(Filter):
 
       policies:
         - name: marked-for-op-volume
-          resource: huaweicloud.volume
+          resource: huaweicloud.evs-volume
           filters:
             - type: marked-for-op
               # The default tag used is mark-for-op-custodian
