@@ -66,7 +66,7 @@ from huaweicloudsdkims.v2 import ImsClient, ListImagesRequest
 from huaweicloudsdkcbr.v1.region.cbr_region import CbrRegion
 from huaweicloudsdkcbr.v1 import CbrClient
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
-from huaweicloudsdksmn.v2 import SmnClient, ListTopicsRequest
+from huaweicloudsdksmn.v2 import SmnClient as SmnSdkClient, ListTopicsRequest
 from huaweicloudsdknat.v2.region.nat_region import NatRegion
 from huaweicloudsdknat.v2 import (
     ListNatGatewaysRequest,
@@ -139,6 +139,13 @@ from huaweicloudsdkworkspace.v2 import WorkspaceClient, ListDesktopsDetailReques
 from huaweicloudsdkworkspace.v2.region.workspace_region import WorkspaceRegion
 from huaweicloudsdkccm.v1 import CcmClient, ListCertificateAuthorityRequest, ListCertificateRequest
 from huaweicloudsdkccm.v1.region.ccm_region import CcmRegion
+from huaweicloudsdkas.v1 import (
+     AsClient, ListScalingGroupsRequest,
+    ListScalingConfigsRequest, ListAllScalingV2PoliciesRequest
+)
+from huaweicloudsdkas.v1.region.as_region import AsRegion
+from huaweicloudsdkelb.v2 import ElbClient as ElbClientV2
+from huaweicloudsdkelb.v2.region.elb_region import ElbRegion as ElbRegionV2
 
 log = logging.getLogger("custodian.huaweicloud.client")
 
@@ -318,6 +325,13 @@ class Session:
                 .with_region(ElbRegion.value_of(self.region))
                 .build()
             )
+        elif service == "elb_v2":
+            client = (
+                ElbClientV2.new_builder()
+                .with_credentials(credentials)
+                .with_region(ElbRegionV2.value_of(self.region))
+                .build()
+            )
         elif service == "eip":
             client = (
                 EipClient.new_builder()
@@ -360,13 +374,6 @@ class Session:
                 CbrClient.new_builder()
                 .with_credentials(credentials)
                 .with_region(CbrRegion.value_of(self.region))
-                .build()
-            )
-        elif service == "smn":
-            client = (
-                SmnClient.new_builder()
-                .with_credentials(credentials)
-                .with_region(SmnRegion.value_of(self.region))
                 .build()
             )
         elif service in ["nat_gateway", "nat_snat_rule", "nat_dnat_rule"]:
@@ -538,6 +545,20 @@ class Session:
                 .with_region(CcmRegion.value_of("ap-southeast-3"))
                 .build()
             )
+        elif service in ['as-group', 'as-config']:
+            client = (
+                AsClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(AsRegion.value_of(self.region))
+                .build()
+            )
+        elif service == 'as-policy':
+            client = (
+                AsClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(AsRegion.value_of(self.region))
+                .build()
+            )
         return client
 
     def region_client(self, service, region):
@@ -688,4 +709,39 @@ class Session:
             request = ListCertificateAuthorityRequest()
         elif service == 'ccm-private-certificate':
             request = ListCertificateRequest()
+        elif service == 'as-group':
+            request = ListScalingGroupsRequest()
+        elif service == 'as-config':
+            request = ListScalingConfigsRequest()
+        elif service == 'as-policy':
+            request = ListAllScalingV2PoliciesRequest()
         return request
+
+
+class SmnClient(SmnSdkClient):
+    def publish_message(self, request):
+        """消息发布 - 支持跨租户
+
+        将消息发送给Topic的所有订阅端点。当返回消息ID时，该消息已被保存并开始尝试将其推送给Topic的订阅者。为确保您的消息能够成功推送到各个订阅者，请确保您的消息内容符合当地法律法规要求。
+        三种消息发送方式
+
+        message
+
+        message_structure
+
+        message_template_name
+
+        只需要设置其中一个，如果同时设置，生效的优先级为
+        message_structure &gt; message_template_name &gt; message。
+
+        Please refer to HUAWEI cloud API Explorer for details.
+
+        :param request: Request instance for PublishMessage
+        :type request: :class:`huaweicloudsdksmn.v2.PublishMessageRequest`
+        :rtype: :class:`huaweicloudsdksmn.v2.PublishMessageResponse`
+        """
+        http_info = self._publish_message_http_info(request)
+        project_id = request.topic_urn.split(":")[3]
+        if project_id:
+            http_info["path_params"]["project_id"] = project_id
+        return self._call_api(**http_info)

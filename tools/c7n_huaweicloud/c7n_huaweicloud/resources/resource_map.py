@@ -49,11 +49,11 @@ ResourceMap = {
     "huaweicloud.org-unit": "c7n_huaweicloud.resources.organizations.OrgUnit",
     "huaweicloud.ram-shared-principals": "c7n_huaweicloud.resources.ram.RAMSharedPrincipals",
     "huaweicloud.antiddos-eip": "c7n_huaweicloud.resources.antiddos.Eip",
-    "huaweicloud.kafka": "c7n_huaweicloud.resources.kafka.Kafka",
+    "huaweicloud.dms-kafka": "c7n_huaweicloud.resources.kafka.Kafka",
     "huaweicloud.apig-api": "c7n_huaweicloud.resources.apig.ApiResource",
     "huaweicloud.apig-stage": "c7n_huaweicloud.resources.apig.StageResource",
     "huaweicloud.apig-api-groups": "c7n_huaweicloud.resources.apig.ApiGroupResource",
-    "huaweicloud.reliability": "c7n_huaweicloud.resources.rocketmq.RocketMQ",
+    "huaweicloud.dms-rocketmq": "c7n_huaweicloud.resources.rocketmq.RocketMQ",
     "huaweicloud.dc": "c7n_huaweicloud.resources.dc.DC",
     "huaweicloud.ccm-ssl-certificate": "c7n_huaweicloud.resources.scm.Scm",
     "huaweicloud.swr": "c7n_huaweicloud.resources.swr.Swr",
@@ -66,5 +66,8 @@ ResourceMap = {
     "huaweicloud.eg-subscription": "c7n_huaweicloud.resources.eg.Subscription",
     "huaweicloud.workspace-desktop": "c7n_huaweicloud.resources.workspace.Workspace",
     "huaweicloud.ccm-private-ca": "c7n_huaweicloud.resources.ccm.CertificateAuthority",
-    "huaweicloud.ccm-private-certificate": "c7n_huaweicloud.resources.ccm.PrivateCertificate"
+    "huaweicloud.ccm-private-certificate": "c7n_huaweicloud.resources.ccm.PrivateCertificate",
+    "huaweicloud.as-group": "c7n_huaweicloud.resources.as.AsGroup",
+    "huaweicloud.as-config": "c7n_huaweicloud.resources.as.AsConfig",
+    "huaweicloud.as-policy": "c7n_huaweicloud.resources.as.AsPolicy"
 }
