@@ -143,6 +143,19 @@ from huaweicloudsdkvpcep.v1 import VpcepClient
 from huaweicloudsdkvpcep.v1.region.vpcep_region import VpcepRegion
 from huaweicloudsdkvpcep.v1 import ListEndpointsRequest
 
+# CCE相关导入
+from huaweicloudsdkcce.v3 import (
+    CceClient,
+    ListClustersRequest,
+    ListNodePoolsRequest,
+    ListNodesRequest,
+    ListAddonTemplatesRequest,
+    ListAddonInstancesRequest,
+    ListChartsRequest,
+    ListReleasesRequest
+)
+from huaweicloudsdkcce.v3.region.cce_region import CceRegion
+
 log = logging.getLogger("custodian.huaweicloud.client")
 
 
@@ -533,7 +546,7 @@ class Session:
             client = (
                 CcmClient.new_builder()
                 .with_credentials(globalCredentials)
-                .with_region(CcmRegion.value_of("ap-southeast-3"))
+                .with_region(CcmRegion.value_of("sa-brazil-1"))
                 .build()
             )
         elif service == 'vpcep-ep':
@@ -541,6 +554,15 @@ class Session:
                 VpcepClient.new_builder()
                 .with_credentials(credentials)
                 .with_region(VpcepRegion.value_of(self.region))
+                .build()
+            )
+        # CCE相关服务支持
+        elif service in ["cce-cluster", "cce-nodepool", "cce-node", "cce-addontemplate",
+                        "cce-addoninstance", "cce-chart", "cce-release"]:
+            client = (
+                CceClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(CceRegion.value_of(self.region))
                 .build()
             )
         return client
@@ -612,9 +634,9 @@ class Session:
         elif service == "functiongraph":
             request = ListFunctionsRequest()
         elif service == "elb_loadbalancer":
-            request = ListLoadBalancersRequest()
+            request = ListLoadBalancersRequest(enterprise_project_id=["all_granted_eps"])
         elif service == "elb_listener":
-            request = ListListenersRequest()
+            request = ListListenersRequest(enterprise_project_id=["all_granted_eps"])
         elif service == "eip":
             request = ListPublicipsRequest()
         elif service == "ims":
@@ -695,6 +717,20 @@ class Session:
             request = ListCertificateRequest()
         elif service == 'vpcep-ep':
             request = ListEndpointsRequest()
+        elif service == "cce-cluster":
+            request = ListClustersRequest()
+        elif service == "cce-nodepool":
+            request = ListNodePoolsRequest()
+        elif service == "cce-node":
+            request = ListNodesRequest()
+        elif service == "cce-addontemplate":
+            request = ListAddonTemplatesRequest()
+        elif service == "cce-addoninstance":
+            request = ListAddonInstancesRequest()
+        elif service == "cce-chart":
+            request = ListChartsRequest()
+        elif service == "cce-release":
+            request = ListReleasesRequest()
         return request
 
 
